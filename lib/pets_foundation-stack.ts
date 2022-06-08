@@ -29,9 +29,39 @@ export class PetsFoundationStack extends Stack {
 		});
 
 		// Lambda stack
-		const findAll = new lambda.Function(this, 'findAllFoundations', {
+		const findAllFoundations = new lambda.Function(this, 'findAllFoundations', {
 			runtime: lambda.Runtime.NODEJS_16_X,
-			handler: 'find-all.handler',
+			handler: 'findAll-foundation.handler',
+			code: lambda.Code.fromAsset('./src/lambdas'),
+			environment: {
+				TABLE_NAME: dynamoFoundationTable.tableName,
+				PRIMARY_KEY: 'foundationId',
+			},
+		});
+
+		const createFoundation = new lambda.Function(this, 'createFoundations', {
+			runtime: lambda.Runtime.NODEJS_16_X,
+			handler: 'create-foundation.handler',
+			code: lambda.Code.fromAsset('./src/lambdas'),
+			environment: {
+				TABLE_NAME: dynamoFoundationTable.tableName,
+				PRIMARY_KEY: 'foundationId',
+			},
+		});
+
+		const findOneFoundation = new lambda.Function(this, 'findOneFoundation', {
+			runtime: lambda.Runtime.NODEJS_16_X,
+			handler: 'findOne-foundation.handler',
+			code: lambda.Code.fromAsset('./src/lambdas'),
+			environment: {
+				TABLE_NAME: dynamoFoundationTable.tableName,
+				PRIMARY_KEY: 'foundationId',
+			},
+		});
+
+		const deleteFoundation = new lambda.Function(this, 'deleteFoundation', {
+			runtime: lambda.Runtime.NODEJS_16_X,
+			handler: 'delete-foundation.handler',
 			code: lambda.Code.fromAsset('./src/lambdas'),
 			environment: {
 				TABLE_NAME: dynamoFoundationTable.tableName,
@@ -40,7 +70,10 @@ export class PetsFoundationStack extends Stack {
 		});
 
 		// Assign IAM role to Lambda function
-		dynamoFoundationTable.grantReadData(findAll);
+		dynamoFoundationTable.grantWriteData(createFoundation);
+		dynamoFoundationTable.grantReadData(findAllFoundations);
+		dynamoFoundationTable.grantReadData(findOneFoundation);
+		dynamoFoundationTable.grantReadWriteData(deleteFoundation);
 
 		// API Gateway stack
 		const api = new apigw.RestApi(this, 'PetsFoundationAPI', {
@@ -51,20 +84,42 @@ export class PetsFoundationStack extends Stack {
 			},
 		});
 
-		const rootAPI = api.root.addResource('foundations');
-		const findAllEndpoint = new apigw.LambdaIntegration(findAll);
+		const foundationsResource = api.root.addResource('foundations');
 
-		rootAPI.addMethod('GET', findAllEndpoint);
+		const findAllFoundationEndpoint = new apigw.LambdaIntegration(
+			findAllFoundations
+		);
+
+		const createFoundationEndpoint = new apigw.LambdaIntegration(
+			createFoundation
+		);
+
+		const deleteFoundationEndpoint = new apigw.LambdaIntegration(
+			deleteFoundation
+		);
+
+		const findOneFoundationEndpoint = new apigw.LambdaIntegration(
+			findOneFoundation
+		);
+
+		foundationsResource.addMethod('POST', createFoundationEndpoint);
+		foundationsResource.addMethod('GET', findAllFoundationEndpoint);
+		foundationsResource.addMethod('DELETE', deleteFoundationEndpoint);
+
+		const findOneFoundationResource =
+			foundationsResource.addResource('{foundationId}');
+
+		findOneFoundationResource.addMethod('GET', findOneFoundationEndpoint);
 
 		// Little security
-		// const plan = api.addUsagePlan('UsagePlan', {
-		// 	name: 'EASY',
-		// 	throttle: {
-		// 		rateLimit: 20,
-		// 		burstLimit: 2,
-		// 	},
-		// });
-		// const key = api.addApiKey('ApiKey');
-		// plan.addApiKey(key);
+		const plan = api.addUsagePlan('UsagePlan', {
+			name: 'EASY',
+			throttle: {
+				rateLimit: 20,
+				burstLimit: 2,
+			},
+		});
+		const key = api.addApiKey('ApiKey');
+		plan.addApiKey(key);
 	}
 }
