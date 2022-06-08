@@ -3,7 +3,7 @@ const { DynamoDB } = require('aws-sdk');
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 
-export const handler = async (event: any): Promise<any> => {
+export const handler = async (): Promise<any> => {
 	const params = {
 		TableName: TABLE_NAME,
 	};
@@ -13,7 +13,6 @@ export const handler = async (event: any): Promise<any> => {
 		return {
 			statusCode: 200,
 			body: JSON.stringify(response.Items),
-			event,
 		};
 	} catch (error) {
 		console.log('Error retrieving foundations: ', error);
