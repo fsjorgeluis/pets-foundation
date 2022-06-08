@@ -84,7 +84,7 @@ export class PetsFoundationStack extends Stack {
 			},
 		});
 
-		const foundationsResource = api.root.addResource('foundations');
+		const foundationsRootResource = api.root.addResource('foundations');
 
 		const findAllFoundationEndpoint = new apigw.LambdaIntegration(
 			findAllFoundations
@@ -94,22 +94,21 @@ export class PetsFoundationStack extends Stack {
 			createFoundation
 		);
 
-		const deleteFoundationEndpoint = new apigw.LambdaIntegration(
-			deleteFoundation
-		);
+		foundationsRootResource.addMethod('POST', createFoundationEndpoint);
+		foundationsRootResource.addMethod('GET', findAllFoundationEndpoint);
+
+		const foundationByIdResource =
+			foundationsRootResource.addResource('{foundationId}');
 
 		const findOneFoundationEndpoint = new apigw.LambdaIntegration(
 			findOneFoundation
 		);
+		const deleteFoundationEndpoint = new apigw.LambdaIntegration(
+			deleteFoundation
+		);
 
-		foundationsResource.addMethod('POST', createFoundationEndpoint);
-		foundationsResource.addMethod('GET', findAllFoundationEndpoint);
-		foundationsResource.addMethod('DELETE', deleteFoundationEndpoint);
-
-		const findOneFoundationResource =
-			foundationsResource.addResource('{foundationId}');
-
-		findOneFoundationResource.addMethod('GET', findOneFoundationEndpoint);
+		foundationByIdResource.addMethod('GET', findOneFoundationEndpoint);
+		foundationByIdResource.addMethod('DELETE', deleteFoundationEndpoint);
 
 		// Little security
 		const plan = api.addUsagePlan('UsagePlan', {

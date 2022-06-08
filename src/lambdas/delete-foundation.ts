@@ -4,18 +4,7 @@ const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
-export const handler = async (event: any): Promise<any> => {
-	const { foundationId } = event.pathParameters;
-
-	if (!foundationId) {
-		return {
-			statusCode: 400,
-			body: JSON.stringify({
-				Error: 'Missing foundationId',
-			}),
-		};
-	}
-
+const deleteOne = async ({ foundationId }: { foundationId: string }) => {
 	const params = {
 		TableName: TABLE_NAME,
 		Key: {
@@ -25,11 +14,28 @@ export const handler = async (event: any): Promise<any> => {
 
 	try {
 		await db.delete(params).promise();
+		return { message: 'Successfully deleted foundation' };
+	} catch (error) {
+		return error;
+	}
+};
+
+export const handler = async (event: any): Promise<Record<string, any>> => {
+	// const { foundationId } = event.pathParameters;
+
+	// const params = {
+	// 	TableName: TABLE_NAME,
+	// 	Key: {
+	// 		[PRIMARY_KEY]: foundationId,
+	// 	},
+	// };
+
+	try {
+		// await db.delete(params).promise();
+		const response = await deleteOne(event.pathParameters);
 		return {
 			statusCode: 200,
-			body: JSON.stringify({
-				message: 'Successfully deleted foundation',
-			}),
+			body: JSON.stringify(response),
 		};
 	} catch (error) {
 		console.log('Error deleting foundation: ', error);

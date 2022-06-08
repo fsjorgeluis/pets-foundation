@@ -21,26 +21,7 @@ const findOne = async ({ foundationId }: { foundationId: string }) => {
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	// const { foundationId } = event.pathParameters;
-
-	// if (!foundationId) {
-	// 	return {
-	// 		statusCode: 400,
-	// 		body: JSON.stringify({
-	// 			Error: 'Missing foundationId',
-	// 		}),
-	// 	};
-	// }
-
-	// const params = {
-	// 	TableName: TABLE_NAME,
-	// 	Key: {
-	// 		[PRIMARY_KEY]: foundationId,
-	// 	},
-	// };
-
 	try {
-		// const response = await db.get(params).promise();
 		const response = await findOne(event.pathParameters);
 		return {
 			statusCode: 200,
