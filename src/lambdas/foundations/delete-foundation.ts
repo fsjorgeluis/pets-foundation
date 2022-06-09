@@ -21,17 +21,7 @@ const deleteOne = async ({ foundationId }: { foundationId: string }) => {
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	// const { foundationId } = event.pathParameters;
-
-	// const params = {
-	// 	TableName: TABLE_NAME,
-	// 	Key: {
-	// 		[PRIMARY_KEY]: foundationId,
-	// 	},
-	// };
-
 	try {
-		// await db.delete(params).promise();
 		const response = await deleteOne(event.pathParameters);
 		return {
 			statusCode: 200,

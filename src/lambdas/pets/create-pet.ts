@@ -4,29 +4,35 @@ const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
-export const handler = async (event: any): Promise<any> => {
-	const foundation =
-		typeof event.body === 'object' ? event.body : JSON.parse(event.body);
+const createPet = async (body: Record<string, any>) => {
+	const pet = typeof body === 'object' ? body : JSON.parse(body);
 	const ID =
 		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 
-	foundation[PRIMARY_KEY] = ID;
+	pet[PRIMARY_KEY] = ID;
 
 	const params = {
 		TableName: TABLE_NAME,
-		Item: foundation,
+		Item: pet,
 	};
 
 	try {
 		await db.put(params).promise();
+		return { message: 'Hosted pet' };
+	} catch (error) {
+		return error;
+	}
+};
+
+export const handler = async (event: any): Promise<any> => {
+	try {
+		const response = await createPet(event.body);
 		return {
 			statusCode: 201,
-			body: JSON.stringify({
-				message: 'Foundation created',
-			}),
+			body: JSON.stringify(response),
 		};
 	} catch (error) {
-		console.log('Error retrieving foundations: ', error);
+		console.log('Yay we got an error hosting pet: ', error);
 		return {
 			statusCode: 500,
 			body: JSON.stringify(error),
