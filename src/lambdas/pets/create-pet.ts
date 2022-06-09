@@ -18,7 +18,7 @@ const createPet = async (body: Record<string, any>) => {
 
 	try {
 		await db.put(params).promise();
-		return { message: 'Hosted pet' };
+		return { message: 'Pet addition successfully' };
 	} catch (error) {
 		return error;
 	}
