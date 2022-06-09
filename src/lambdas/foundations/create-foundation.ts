@@ -26,7 +26,11 @@ const createFoundation = async (body: Record<string, any>) => {
 
 export const handler = async (event: any): Promise<any> => {
 	try {
-		const response = await createFoundation(event.body);
+		const { foundationName, foundationAddress = '' } = JSON.parse(event.body);
+		const response = await createFoundation({
+			foundationName,
+			foundationAddress,
+		});
 		return {
 			statusCode: 201,
 			body: JSON.stringify(response),
