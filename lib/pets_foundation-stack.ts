@@ -97,6 +97,7 @@ export class PetsFoundationStack extends Stack {
 			environment: {
 				TABLE_NAME: dynamoPetsTable.tableName,
 				PRIMARY_KEY: 'petId',
+				// FK_FOUNDATION_ID: 'foundationId',
 			},
 		});
 
@@ -185,13 +186,12 @@ export class PetsFoundationStack extends Stack {
 			modelName: 'petModelCDK',
 			schema: {
 				type: JsonSchemaType.OBJECT,
-				required: ['petName', 'petAge', 'petBreed', 'petType', 'foundationId'],
+				required: ['petName', 'petBreed', 'petType'],
 				properties: {
 					petName: { type: JsonSchemaType.STRING },
 					petAge: { type: JsonSchemaType.NUMBER },
 					petBreed: { type: JsonSchemaType.STRING },
 					petType: { type: JsonSchemaType.STRING },
-					foundationId: { type: JsonSchemaType.STRING },
 				},
 			},
 		});
