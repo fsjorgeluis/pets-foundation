@@ -4,12 +4,12 @@ const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
-const updateFoundation = async ({
+const updatePet = async ({
 	body,
-	foundationId,
+	petId,
 }: {
 	body: Record<string, any>;
-	foundationId: string;
+	petId: string;
 }) => {
 	const updatedItem = typeof body === 'object' ? body : JSON.parse(body);
 	const updatedItemProperties = Object.keys(updatedItem);
@@ -27,7 +27,7 @@ const updateFoundation = async ({
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
-			[PRIMARY_KEY]: foundationId,
+			[PRIMARY_KEY]: petId,
 		},
 		UpdateExpression: `set ${firstProperty} = :${firstProperty}`,
 		ExpressionAttributeValues: {},
@@ -52,13 +52,13 @@ const updateFoundation = async ({
 
 export const handler = async (event: any) => {
 	try {
-		const response = await updateFoundation(event);
+		const response = await updatePet(event);
 		return {
 			statusCode: 204,
 			body: JSON.stringify(response),
 		};
 	} catch (error) {
-		console.log('Error updating foundation: ', error);
+		console.log('Error updating pet data: ', error);
 		return {
 			statusCode: 500,
 			body: JSON.stringify(error),
