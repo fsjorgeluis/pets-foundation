@@ -1,27 +1,22 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { keyFormatter } = require('key-formatter');
-
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
-const SORT_KEY = process.env.SORT_KEY || '';
+// const FK_FOUNDATION_ID = process.env.FK_FOUNDATION_ID || '';
 
-const addPet = async (
-	pk: Record<string, any>,
-	petData: Record<string, any>
-) => {
+const createPet = async (body: Record<string, any>) => {
+	const pet = typeof body === 'object' ? body : JSON.parse(body);
 	const ID =
 		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 
-	// petData['PetId'] = ID;
-	petData[PRIMARY_KEY] = pk.PK;
-	petData[SORT_KEY] = keyFormatter('PET', ID);
-	petData['PetStatus'] = 'unhappy';
+	pet[PRIMARY_KEY] = ID;
+	pet['petStatus'] = 'unhappy';
+	// pet[FK_FOUNDATION_ID] = foundationId;
 
 	const params = {
 		TableName: TABLE_NAME,
-		Item: petData,
+		Item: pet,
 	};
 
 	try {
@@ -33,23 +28,22 @@ const addPet = async (
 };
 
 export const handler = async (event: any): Promise<any> => {
-	const {
-		foundationPk,
-		petName,
-		petBreed,
-		petType,
-		petAge = 0,
-	} = typeof event.body === 'object' ? event.body : JSON.parse(event.body);
 	try {
-		const response = await addPet(
-			{ PK: foundationPk },
-			{
-				PetAge: petAge,
-				PetName: petName,
-				PetBreed: petBreed,
-				PetType: petType,
-			}
-		);
+		// const { foundationId = '' } = JSON.parse(event.queryStringParameters);
+		const {
+			petAge = 0,
+			petName,
+			petBreed,
+			petType,
+			foundationId,
+		} = JSON.parse(event.body);
+		const response = await createPet({
+			foundationId,
+			petAge,
+			petName,
+			petBreed,
+			petType,
+		});
 		return {
 			statusCode: 201,
 			body: JSON.stringify(response),

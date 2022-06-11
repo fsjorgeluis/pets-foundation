@@ -1,22 +1,13 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { wordNormalizer } = require('key-formatter');
-
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
-const SORT_KEY = process.env.SORT_KEY || '';
-
-function capitalize(word: string) {
-	return word.replace(/\b\w/g, (c) => c.toUpperCase());
-}
 
 const updatePet = async ({
-	foundation,
 	body,
 	petId,
 }: {
-	foundation: string;
 	body: Record<string, any>;
 	petId: string;
 }) => {
@@ -36,10 +27,9 @@ const updatePet = async ({
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
-			[PRIMARY_KEY]: `FOUNDATION#${foundation.toUpperCase()}`,
-			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
+			[PRIMARY_KEY]: petId,
 		},
-		UpdateExpression: `set ${capitalize(firstProperty[0])} = :${firstProperty}`,
+		UpdateExpression: `set ${firstProperty} = :${firstProperty}`,
 		ExpressionAttributeValues: {},
 		ReturnValues: 'UPDATED_NEW',
 	};
@@ -48,24 +38,21 @@ const updatePet = async ({
 		updatedItem[`${firstProperty}`];
 
 	updatedItemProperties.forEach((property) => {
-		params.UpdateExpression += `, ${capitalize(property)} = :${property}`;
+		params.UpdateExpression += `, ${property} = :${property}`;
 		params.ExpressionAttributeValues[`:${property}`] = updatedItem[property];
 	});
 
 	try {
 		await db.update(params).promise();
-		return { message: 'Pet updated successfully' };
+		return { message: 'Success' };
 	} catch (error) {
 		return error;
 	}
 };
 
 export const handler = async (event: any) => {
-	const { petId } = event.pathParameters;
-	const { body } = event;
-	const { foundation } = event.headers;
 	try {
-		const response = await updatePet({ foundation, petId, body });
+		const response = await updatePet(event);
 		return {
 			statusCode: 204,
 			body: JSON.stringify(response),

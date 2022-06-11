@@ -4,24 +4,16 @@ const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
-const findOne = async ({
-	foundation,
-	petId,
-}: {
-	foundation: string;
-	petId: string;
-}) => {
+const findOne = async ({ petId }: { petId: string }) => {
 	const params = {
 		TableName: TABLE_NAME,
-		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
-		ExpressionAttributeValues: {
-			':pk': `FOUNDATION#${foundation.toUpperCase()}`,
-			':sk': `PET#${petId.toUpperCase()}`,
+		Key: {
+			[PRIMARY_KEY]: petId,
 		},
 	};
 
 	try {
-		const response = await db.query(params).promise();
+		const response = await db.get(params).promise();
 		return response;
 	} catch (error) {
 		return error;
@@ -29,13 +21,11 @@ const findOne = async ({
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { petId } = event.pathParameters;
-	const { foundation } = event.queryStringParameters;
 	try {
-		const response = await findOne({ foundation, petId });
+		const response = await findOne(event.pathParameters);
 		return {
 			statusCode: 200,
-			body: JSON.stringify(response.Items),
+			body: JSON.stringify(response.Item),
 		};
 	} catch (error) {
 		console.log('Error retrieving pet: ', error);

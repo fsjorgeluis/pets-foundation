@@ -1,25 +1,19 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { keyFormatter } = require('key-formatter');
-
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
-const SORT_KEY = process.env.SORT_KEY || '';
 
-const createFoundation = async (foundationData: Record<string, any>) => {
-	foundationData[PRIMARY_KEY] = keyFormatter(
-		'FOUNDATION',
-		foundationData.FoundationName
-	);
-	foundationData[SORT_KEY] = keyFormatter(
-		'METADATA',
-		foundationData.FoundationName
-	);
+const createFoundation = async (body: Record<string, any>) => {
+	const foundation = typeof body === 'object' ? body : JSON.parse(body);
+	const ID =
+		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
+
+	foundation[PRIMARY_KEY] = ID;
 
 	const params = {
 		TableName: TABLE_NAME,
-		Item: foundationData,
+		Item: foundation,
 	};
 
 	try {
@@ -31,12 +25,11 @@ const createFoundation = async (foundationData: Record<string, any>) => {
 };
 
 export const handler = async (event: any): Promise<any> => {
-	const { foundationName, foundationAddress = '' } =
-		typeof event.body === 'object' ? event.body : JSON.parse(event.body);
 	try {
+		const { foundationName, foundationAddress = '' } = JSON.parse(event.body);
 		const response = await createFoundation({
-			FoundationName: foundationName,
-			FoundationAddress: foundationAddress,
+			foundationName,
+			foundationAddress,
 		});
 		return {
 			statusCode: 201,

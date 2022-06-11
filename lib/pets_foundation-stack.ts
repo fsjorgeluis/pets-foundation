@@ -5,6 +5,7 @@ import {
 	aws_lambda as lambda,
 	aws_apigateway as apigw,
 } from 'aws-cdk-lib';
+// import { AwsCliLayer } from 'aws-cdk-lib/lambda-layer-awscli';
 import { JsonSchemaType } from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from 'constructs';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
@@ -14,100 +15,176 @@ export class PetsFoundationStack extends Stack {
 		super(scope, id, props);
 
 		// The code that defines your stack goes here
-
 		// example resource
 		// const queue = new sqs.Queue(this, 'PetsFoundationQueue', {
 		//   visibilityTimeout: cdk.Duration.seconds(300)
 		// });
 
 		// DynamoDB stack for foundation
-		const dynamoFoundationTable = new dynamodb.Table(this, 'FoundationTable', {
-			partitionKey: {
-				name: 'foundationId',
-				type: dynamodb.AttributeType.STRING,
-			},
-			tableName: 'FoundationTable',
-		});
+		// const dynamoFoundationTable = new dynamodb.Table(this, 'FoundationTable', {
+		// 	partitionKey: {
+		// 		name: 'foundationId',
+		// 		type: dynamodb.AttributeType.STRING,
+		// 	},
+		// 	tableName: 'FoundationTable',
+		// });
 
 		// DynamoDB stack for pets
-		const dynamoPetsTable = new dynamodb.Table(this, 'PetsTable', {
+		// const dynamoPetsTable = new dynamodb.Table(this, 'PetsTable', {
+		// 	partitionKey: {
+		// 		name: 'petId',
+		// 		type: dynamodb.AttributeType.STRING,
+		// 	},
+		// 	tableName: 'PetsTable',
+		// });
+
+		const dynamoPetFoundationTable = new dynamodb.Table(this, 'PetFoundation', {
 			partitionKey: {
-				name: 'petId',
+				name: 'PK',
 				type: dynamodb.AttributeType.STRING,
 			},
-			tableName: 'PetsTable',
+			sortKey: {
+				name: 'SK',
+				type: dynamodb.AttributeType.STRING,
+			},
+			tableName: 'PetFoundation',
 		});
+
+		// Layer stack for lambda
+		const petFoundationLayer = new lambda.LayerVersion(
+			this,
+			'PetFoundationLayer',
+			{
+				compatibleRuntimes: [
+					lambda.Runtime.NODEJS_14_X,
+					lambda.Runtime.NODEJS_16_X,
+				],
+				code: lambda.Code.fromAsset('./src/layers'),
+				description: 'Pet Foundation helpers Layer',
+			}
+		);
 
 		// Lambda stack for foundation
-		const findAllFoundations = new lambda.Function(this, 'FindAllFoundations', {
-			runtime: lambda.Runtime.NODEJS_16_X,
-			handler: 'findAll-foundation.handler',
-			code: lambda.Code.fromAsset('./src/lambdas/foundations'),
-			environment: {
-				TABLE_NAME: dynamoFoundationTable.tableName,
-				PRIMARY_KEY: 'foundationId',
-			},
-		});
-
 		const createFoundation = new lambda.Function(this, 'CreateFoundation', {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'create-foundation.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+			layers: [petFoundationLayer],
+			description: 'Create a new foundation',
 			environment: {
-				TABLE_NAME: dynamoFoundationTable.tableName,
-				PRIMARY_KEY: 'foundationId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
 
-		const findOneFoundation = new lambda.Function(this, 'FindOneFoundation', {
+		const findAllFoundations = new lambda.Function(this, 'FindAllFoundations', {
 			runtime: lambda.Runtime.NODEJS_16_X,
-			handler: 'findOne-foundation.handler',
+			handler: 'findAll-foundation.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+			description: 'Find all foundations',
 			environment: {
-				TABLE_NAME: dynamoFoundationTable.tableName,
-				PRIMARY_KEY: 'foundationId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
 
-		const updateFoundation = new lambda.Function(this, 'UpdateFoundation', {
-			runtime: lambda.Runtime.NODEJS_16_X,
-			handler: 'update-foundation.handler',
-			code: lambda.Code.fromAsset('./src/lambdas/foundations'),
-			environment: {
-				TABLE_NAME: dynamoFoundationTable.tableName,
-				PRIMARY_KEY: 'foundationId',
-			},
-		});
+		// const findAllFoundations = new lambda.Function(this, 'FindAllFoundations', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'findAll-foundation.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoFoundationTable.tableName,
+		// 		PRIMARY_KEY: 'foundationId',
+		// 	},
+		// });
 
-		const deleteFoundation = new lambda.Function(this, 'DeleteFoundation', {
-			runtime: lambda.Runtime.NODEJS_16_X,
-			handler: 'delete-foundation.handler',
-			code: lambda.Code.fromAsset('./src/lambdas/foundations'),
-			environment: {
-				TABLE_NAME: dynamoFoundationTable.tableName,
-				PRIMARY_KEY: 'foundationId',
-			},
-		});
+		// const createFoundation = new lambda.Function(this, 'CreateFoundation', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'create-foundation.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoFoundationTable.tableName,
+		// 		PRIMARY_KEY: 'foundationId',
+		// 	},
+		// });
+
+		// const findOneFoundation = new lambda.Function(this, 'FindOneFoundation', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'findOne-foundation.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoFoundationTable.tableName,
+		// 		PRIMARY_KEY: 'foundationId',
+		// 	},
+		// });
+
+		// const updateFoundation = new lambda.Function(this, 'UpdateFoundation', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'update-foundation.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoFoundationTable.tableName,
+		// 		PRIMARY_KEY: 'foundationId',
+		// 	},
+		// });
+
+		// const deleteFoundation = new lambda.Function(this, 'DeleteFoundation', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'delete-foundation.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/foundations'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoFoundationTable.tableName,
+		// 		PRIMARY_KEY: 'foundationId',
+		// 	},
+		// });
 
 		// Lambda stack for pets
 		const createPet = new lambda.Function(this, 'CreatePet', {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'create-pet.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/pets'),
+			layers: [petFoundationLayer],
+			description: 'Add a new pet',
 			environment: {
-				TABLE_NAME: dynamoPetsTable.tableName,
-				PRIMARY_KEY: 'petId',
-				// FK_FOUNDATION_ID: 'foundationId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
+
+		// const createPet = new lambda.Function(this, 'CreatePet', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'create-pet.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/pets'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoPetsTable.tableName,
+		// 		PRIMARY_KEY: 'petId',
+		// 		// FK_FOUNDATION_ID: 'foundationId',
+		// 	},
+		// });
+
+		// const findAllPets = new lambda.Function(this, 'FindAllPets', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'findAll-pet.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/pets'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoPetsTable.tableName,
+		// 		PRIMARY_KEY: 'petId',
+		// 	},
+		// });
 
 		const findAllPets = new lambda.Function(this, 'FindAllPets', {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'findAll-pet.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/pets'),
+			layers: [petFoundationLayer],
+			description: 'Find all pets for specific foundation',
 			environment: {
-				TABLE_NAME: dynamoPetsTable.tableName,
-				PRIMARY_KEY: 'petId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
 
@@ -115,9 +192,11 @@ export class PetsFoundationStack extends Stack {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'findOne-pet.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/pets'),
+			description: 'Find a pet by id',
 			environment: {
-				TABLE_NAME: dynamoPetsTable.tableName,
-				PRIMARY_KEY: 'petId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
 
@@ -125,9 +204,12 @@ export class PetsFoundationStack extends Stack {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'update-pet.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/pets'),
+			layers: [petFoundationLayer],
+			description: "Update a pet's information",
 			environment: {
-				TABLE_NAME: dynamoPetsTable.tableName,
-				PRIMARY_KEY: 'petId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
 
@@ -135,25 +217,64 @@ export class PetsFoundationStack extends Stack {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'delete-pet.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/pets'),
+			description: 'Delete a pet by id',
 			environment: {
-				TABLE_NAME: dynamoPetsTable.tableName,
-				PRIMARY_KEY: 'petId',
+				TABLE_NAME: dynamoPetFoundationTable.tableName,
+				PRIMARY_KEY: 'PK',
+				SORT_KEY: 'SK',
 			},
 		});
 
+		// const findOnePet = new lambda.Function(this, 'FindOnePet', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'findOne-pet.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/pets'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoPetsTable.tableName,
+		// 		PRIMARY_KEY: 'petId',
+		// 	},
+		// });
+
+		// const updatePet = new lambda.Function(this, 'UpdatePet', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'update-pet.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/pets'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoPetsTable.tableName,
+		// 		PRIMARY_KEY: 'petId',
+		// 	},
+		// });
+
+		// const deletePet = new lambda.Function(this, 'DeletePet', {
+		// 	runtime: lambda.Runtime.NODEJS_16_X,
+		// 	handler: 'delete-pet.handler',
+		// 	code: lambda.Code.fromAsset('./src/lambdas/pets'),
+		// 	environment: {
+		// 		TABLE_NAME: dynamoPetsTable.tableName,
+		// 		PRIMARY_KEY: 'petId',
+		// 	},
+		// });
+
 		// Assign IAM role to Lambda foundation function
-		dynamoFoundationTable.grantWriteData(createFoundation);
-		dynamoFoundationTable.grantReadData(findAllFoundations);
-		dynamoFoundationTable.grantReadData(findOneFoundation);
-		dynamoFoundationTable.grantReadWriteData(updateFoundation);
-		dynamoFoundationTable.grantReadWriteData(deleteFoundation);
+		dynamoPetFoundationTable.grantWriteData(createFoundation);
+		dynamoPetFoundationTable.grantReadData(findAllFoundations);
+		// dynamoFoundationTable.grantWriteData(createFoundation);
+		// dynamoFoundationTable.grantReadData(findAllFoundations);
+		// dynamoFoundationTable.grantReadData(findOneFoundation);
+		// dynamoFoundationTable.grantReadWriteData(updateFoundation);
+		// dynamoFoundationTable.grantReadWriteData(deleteFoundation);
 
 		// Assign IAM role to lambda pets function
-		dynamoPetsTable.grantWriteData(createPet);
-		dynamoPetsTable.grantReadData(findAllPets);
-		dynamoPetsTable.grantReadData(findOnePet);
-		dynamoPetsTable.grantReadWriteData(updatePet);
-		dynamoPetsTable.grantReadWriteData(deletePet);
+		dynamoPetFoundationTable.grantWriteData(createPet);
+		dynamoPetFoundationTable.grantReadData(findOnePet);
+		dynamoPetFoundationTable.grantReadData(findAllPets);
+		dynamoPetFoundationTable.grantReadWriteData(deletePet);
+		dynamoPetFoundationTable.grantReadWriteData(updatePet);
+		// dynamoPetsTable.grantWriteData(createPet);
+		// dynamoPetsTable.grantReadData(findAllPets);
+		// dynamoPetsTable.grantReadData(findOnePet);
+		// dynamoPetsTable.grantReadWriteData(updatePet);
+		// dynamoPetsTable.grantReadWriteData(deletePet);
 
 		// API Gateway stack
 		const api = new apigw.RestApi(this, 'PetsFoundationAPI', {
@@ -186,8 +307,9 @@ export class PetsFoundationStack extends Stack {
 			modelName: 'petModelCDK',
 			schema: {
 				type: JsonSchemaType.OBJECT,
-				required: ['petName', 'petBreed', 'petType'],
+				required: ['foundationPk', 'petName', 'petBreed', 'petType'],
 				properties: {
+					foundationPk: { type: JsonSchemaType.STRING },
 					petName: { type: JsonSchemaType.STRING },
 					petAge: { type: JsonSchemaType.NUMBER },
 					petBreed: { type: JsonSchemaType.STRING },
@@ -207,6 +329,10 @@ export class PetsFoundationStack extends Stack {
 			findAllFoundations
 		);
 
+		// const findAllFoundationEndpoint = new apigw.LambdaIntegration(
+		// 	findAllFoundations
+		// );
+
 		foundationsRootResource.addMethod('POST', createFoundationEndpoint, {
 			requestValidator: new apigw.RequestValidator(
 				this,
@@ -221,33 +347,36 @@ export class PetsFoundationStack extends Stack {
 				'application/json': foundationModel,
 			},
 		});
+
 		foundationsRootResource.addMethod('GET', findAllFoundationEndpoint);
 
-		const foundationByIdResource =
-			foundationsRootResource.addResource('{foundationId}');
+		// foundationsRootResource.addMethod('GET', findAllFoundationEndpoint);
 
-		const findOneFoundationEndpoint = new apigw.LambdaIntegration(
-			findOneFoundation
-		);
+		// const foundationByIdResource =
+		// 	foundationsRootResource.addResource('{foundationId}');
 
-		const updateFoundationEndpoint = new apigw.LambdaIntegration(
-			updateFoundation
-		);
+		// const findOneFoundationEndpoint = new apigw.LambdaIntegration(
+		// 	findOneFoundation
+		// );
 
-		const deleteFoundationEndpoint = new apigw.LambdaIntegration(
-			deleteFoundation
-		);
+		// const updateFoundationEndpoint = new apigw.LambdaIntegration(
+		// 	updateFoundation
+		// );
 
-		foundationByIdResource.addMethod('GET', findOneFoundationEndpoint);
-		foundationByIdResource.addMethod('PUT', updateFoundationEndpoint);
-		foundationByIdResource.addMethod('DELETE', deleteFoundationEndpoint);
+		// const deleteFoundationEndpoint = new apigw.LambdaIntegration(
+		// 	deleteFoundation
+		// );
+
+		// foundationByIdResource.addMethod('GET', findOneFoundationEndpoint);
+		// foundationByIdResource.addMethod('PUT', updateFoundationEndpoint);
+		// foundationByIdResource.addMethod('DELETE', deleteFoundationEndpoint);
 
 		// Pets resources
 		const petsRootResource = api.root.addResource('pets');
-
 		const createPetEndpoint = new apigw.LambdaIntegration(createPet);
-
 		const findAllPetsEndpoint = new apigw.LambdaIntegration(findAllPets);
+
+		// const findAllPetsEndpoint = new apigw.LambdaIntegration(findAllPets);
 
 		petsRootResource.addMethod('POST', createPetEndpoint, {
 			requestValidator: new apigw.RequestValidator(this, 'PetBodyValidator', {
@@ -259,19 +388,26 @@ export class PetsFoundationStack extends Stack {
 				'application/json': petModel,
 			},
 		});
+
 		petsRootResource.addMethod('GET', findAllPetsEndpoint);
 
+		// petsRootResource.addMethod('GET', findAllPetsEndpoint);
+
 		const petByIdResource = petsRootResource.addResource('{petId}');
-
 		const findOnePetEndpoint = new apigw.LambdaIntegration(findOnePet);
-
 		const updatePetEndpoint = new apigw.LambdaIntegration(updatePet);
-
 		const deletePetEndpoint = new apigw.LambdaIntegration(deletePet);
+
+		// const updatePetEndpoint = new apigw.LambdaIntegration(updatePet);
+
+		// const deletePetEndpoint = new apigw.LambdaIntegration(deletePet);
 
 		petByIdResource.addMethod('GET', findOnePetEndpoint);
 		petByIdResource.addMethod('PATCH', updatePetEndpoint);
 		petByIdResource.addMethod('DELETE', deletePetEndpoint);
+		// petByIdResource.addMethod('GET', findOnePetEndpoint);
+		// petByIdResource.addMethod('PATCH', updatePetEndpoint);
+		// petByIdResource.addMethod('DELETE', deletePetEndpoint);
 
 		// Little security
 		const plan = api.addUsagePlan('UsagePlan', {

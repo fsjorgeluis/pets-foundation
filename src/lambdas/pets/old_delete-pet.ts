@@ -3,20 +3,12 @@ const { DynamoDB } = require('aws-sdk');
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
-const SORT_KEY = process.env.SORT_KEY || '';
 
-const deleteOne = async ({
-	foundation,
-	petId,
-}: {
-	foundation: string;
-	petId: string;
-}) => {
+const deleteOne = async ({ petId }: { petId: string }) => {
 	const params = {
 		TableName: TABLE_NAME,
 		Key: {
-			[PRIMARY_KEY]: `FOUNDATION#${foundation}`,
-			[SORT_KEY]: `PET#${petId}`,
+			[PRIMARY_KEY]: petId,
 		},
 	};
 
@@ -29,10 +21,8 @@ const deleteOne = async ({
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { foundation } = event.headers;
-	const { petId } = event.pathParameters;
 	try {
-		const response = await deleteOne({ foundation, petId });
+		const response = await deleteOne(event.pathParameters);
 		return {
 			statusCode: 200,
 			body: JSON.stringify(response),
