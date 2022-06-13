@@ -1,15 +1,11 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { wordNormalizer } = require('key-formatter');
+const { capitalize } = require('key-formatter');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
-
-function capitalize(word: string) {
-	return word.replace(/\b\w/g, (c) => c.toUpperCase());
-}
 
 const updatePet = async ({
 	foundation,
