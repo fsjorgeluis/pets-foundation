@@ -2,20 +2,19 @@ const { DynamoDB } = require('aws-sdk');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
-const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
 const findOne = async ({
-	foundation,
+	foundationPK,
 	petId,
 }: {
-	foundation: string;
+	foundationPK: string;
 	petId: string;
 }) => {
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
 		ExpressionAttributeValues: {
-			':pk': `FOUNDATION#${foundation.toUpperCase()}`,
+			':pk': foundationPK.toUpperCase(),
 			':sk': `PET#${petId.toUpperCase()}`,
 		},
 	};
@@ -29,10 +28,10 @@ const findOne = async ({
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
+	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
-	const { foundation } = event.queryStringParameters;
 	try {
-		const response = await findOne({ foundation, petId });
+		const response = await findOne({ foundationPK, petId });
 		return {
 			statusCode: 200,
 			body: JSON.stringify(response.Items),

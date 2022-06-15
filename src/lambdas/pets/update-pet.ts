@@ -8,15 +8,15 @@ const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
 
 const updatePet = async ({
-	foundation,
-	body,
+	foundationPK,
+	result,
 	petId,
 }: {
-	foundation: string;
-	body: Record<string, any>;
+	foundationPK: string;
+	result: Record<string, any>;
 	petId: string;
 }) => {
-	const updatedItem = typeof body === 'object' ? body : JSON.parse(body);
+	const updatedItem = typeof result === 'object' ? result : JSON.parse(result);
 	const updatedItemProperties = Object.keys(updatedItem);
 	if (!updatedItem || updatedItemProperties.length < 1) {
 		return {
@@ -32,7 +32,7 @@ const updatePet = async ({
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
-			[PRIMARY_KEY]: `FOUNDATION#${foundation.toUpperCase()}`,
+			[PRIMARY_KEY]: foundationPK.toUpperCase(),
 			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
 		},
 		UpdateExpression: `set ${capitalize(firstProperty[0])} = :${firstProperty}`,
@@ -57,11 +57,11 @@ const updatePet = async ({
 };
 
 export const handler = async (event: any) => {
+	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
-	const { body } = event;
-	const { foundation } = event.headers;
+	const { petStatus, ...result } = JSON.parse(event.body);
 	try {
-		const response = await updatePet({ foundation, petId, body });
+		const response = await updatePet({ foundationPK, petId, result });
 		return {
 			statusCode: 204,
 			body: JSON.stringify(response),

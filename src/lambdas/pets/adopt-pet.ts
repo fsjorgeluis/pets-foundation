@@ -5,40 +5,46 @@ const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
 
-const deleteOne = async ({
+const adoptPet = async ({
 	foundationPK,
 	petId,
 }: {
 	foundationPK: string;
 	petId: string;
 }) => {
-	const params = {
+	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
 			[PRIMARY_KEY]: foundationPK.toUpperCase(),
-			[SORT_KEY]: `PET#${petId}`,
+			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
 		},
+		UpdateExpression: `set PetStatus = :petStatus`,
+		ExpressionAttributeValues: {
+			':petStatus': 'happy',
+		},
+		ReturnValues: 'UPDATED_NEW',
 	};
 
 	try {
-		await db.delete(params).promise();
-		return { message: 'The pet has been successfully released' };
+		await db.update(params).promise();
+		return { message: 'Pet updated successfully' };
 	} catch (error) {
 		return error;
 	}
 };
 
-export const handler = async (event: any): Promise<Record<string, any>> => {
+export const handler = async (event: any) => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
+	console.log(event);
 	try {
-		const response = await deleteOne({ foundationPK, petId });
+		const response = await adoptPet({ foundationPK, petId });
 		return {
-			statusCode: 200,
+			statusCode: 204,
 			body: JSON.stringify(response),
 		};
 	} catch (error) {
-		console.log('Error releasing pet: ', error);
+		console.log('Error updating pet data: ', error);
 		return {
 			statusCode: 500,
 			body: JSON.stringify(error),

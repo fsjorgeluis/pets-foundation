@@ -14,7 +14,7 @@ const addPet = async (
 	const ID =
 		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 
-	// petData['PetId'] = ID;
+	petData['id'] = ID;
 	petData[PRIMARY_KEY] = pk.PK;
 	petData[SORT_KEY] = keyFormatter('PET', ID);
 	petData['PetStatus'] = 'unhappy';
@@ -33,13 +33,14 @@ const addPet = async (
 };
 
 export const handler = async (event: any): Promise<any> => {
+	const { foundationPk } = event.headers;
 	const {
-		foundationPk,
 		petName,
 		petBreed,
 		petType,
 		petAge = 0,
 	} = typeof event.body === 'object' ? event.body : JSON.parse(event.body);
+	console.log(event, foundationPk, petName, petBreed, petType, petAge);
 	try {
 		const response = await addPet(
 			{ PK: foundationPk },
