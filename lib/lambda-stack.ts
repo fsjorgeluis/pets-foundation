@@ -10,9 +10,12 @@ export class LambdaStack extends Stack {
 	constructor(scope: Construct, id: string, props: IDynamoLambdaLayerProps) {
 		super(scope, id, props);
 
-		const { layerStack, dynamoStack } = props;
+		const {
+			layerStack,
+			dynamoStack: { petFoundationTable },
+		} = props;
 
-		// Get array of lambdas to create
+		// Get array to start instantiating lambdas
 		const lambdas = lambdaFunctions(layerStack);
 
 		this.petsFoundation['auth'] = new lambda.Function(this, 'Authorizer', {
@@ -32,14 +35,33 @@ export class LambdaStack extends Stack {
 				layers: lambdaDef.layers || [],
 				description: lambdaDef.description,
 				environment: {
-					TABLE_NAME: dynamoStack.petFoundationTable.tableName,
+					TABLE_NAME: petFoundationTable.tableName,
 					PRIMARY_KEY: 'PK',
 					SORT_KEY: 'SK',
 				},
 			});
 
-			dynamoStack.petFoundationTable.grantReadWriteData(lambdaFunction);
+			assignPermission(lambdaFunction, lambdaDef.permission);
 			this.petsFoundation[lambdaDef.action] = lambdaFunction;
+		}
+
+		function assignPermission(
+			lambdaFunction: lambda.Function,
+			permission: string
+		) {
+			switch (permission) {
+				case 'write':
+					petFoundationTable.grantWriteData(lambdaFunction);
+					break;
+				case 'read':
+					petFoundationTable.grantReadData(lambdaFunction);
+					break;
+				case 'read-write':
+					petFoundationTable.grantReadWriteData(lambdaFunction);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }

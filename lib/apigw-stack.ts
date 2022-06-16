@@ -25,7 +25,6 @@ export class ApiGwStack extends Stack {
 		// Authorizer for API Gateway
 		const auth = new apigw.TokenAuthorizer(this, 'Authorizer', {
 			handler: GetAuthFunction,
-			identitySource: 'method.request.header.authorizationToken',
 			resultsCacheTtl: Duration.seconds(0),
 		});
 

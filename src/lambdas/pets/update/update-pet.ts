@@ -62,9 +62,9 @@ const updatePet = async ({
 export const handler = async (event: any) => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
-	const { body } = JSON.parse(event.body);
+	const body = JSON.parse(event.body);
 	const dataToUpdate = {
-		PetAge: body.petAge || '',
+		PetAge: body.petAge <= 0 ? 0 : body.petAge || '',
 		PetName: body.petName || '',
 		PetBreed: body.petBreed || '',
 		PetType: body.petType || '',

@@ -12,6 +12,8 @@ Asegúrate de que tu cuenta de aws cuente con los permisos necesarios para crear
 - S3 Buckets
 - SNS
 
+Tambien recuerda crear el archivo `.env` utilizando como base el `.env.sample` encontrado en la raíz del proyecto.
+
 ## Funcionamiento
 
 ![cdk_pets_foundation](https://user-images.githubusercontent.com/20530235/174009852-1fa9b90d-739b-40c4-847e-13d0c67c99dd.png)
