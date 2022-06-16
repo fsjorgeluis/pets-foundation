@@ -55,3 +55,9 @@ PATCH
 - `npm run test` ejecuta las pruebas unitarias con jest.
 
 \* Nota: por defecto no elimina los registros de CloudWatch, tablas de dynamoDB, buckets y su contenido.
+
+## Mejoras por hacer
+
+- Agregar unit test.
+- Refactorización de código.
+- Agregar pipelines.
