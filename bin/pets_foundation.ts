@@ -6,7 +6,6 @@ import { DynamoStack } from '../lib/dynamo-stack';
 import { LayerStack } from '../lib/layer-stack';
 import { LambdaStack } from '../lib/lambda-stack';
 import { ApiGwStack } from '../lib/apigw-stack';
-// import { PetsFoundationStack } from '../lib/pets_foundation-stack';
 
 const app = new cdk.App();
 const appPrefix = 'pets-foundation';
@@ -41,7 +40,3 @@ new ApiGwStack(app, 'ApiStack', {
 	name: `${appPrefix}-api-${stage}`,
 	lambdaStack: lambdaStack,
 });
-
-// new PetsFoundationStack(app, 'PetsFoundationStack', {
-// 	env: { account: '159688459304', region: 'us-east-1' },
-// });

@@ -1,8 +1,13 @@
-import { Stack, aws_apigateway as apigw, CfnOutput } from 'aws-cdk-lib';
-import { JsonSchemaType } from 'aws-cdk-lib/aws-apigateway';
+import {
+	Stack,
+	aws_apigateway as apigw,
+	aws_lambda as lambda,
+	CfnOutput,
+	Duration,
+} from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import { ILambdaStackProps } from '../src/interfaces/multi-stack.interface';
+import { ILambdaStackProps } from '../src/interfaces';
 
 export class ApiGwStack extends Stack {
 	constructor(scope: Construct, id: string, props: ILambdaStackProps) {
@@ -10,12 +15,29 @@ export class ApiGwStack extends Stack {
 
 		const { lambdaStack } = props;
 
+		// Get authorizer lambda function avoiding circular dependency
+		const GetAuthFunction = lambda.Function.fromFunctionArn(
+			this,
+			'AuthFunction',
+			lambdaStack.petsFoundation.auth.functionArn
+		);
+
+		// Authorizer for API Gateway
+		const auth = new apigw.TokenAuthorizer(this, 'Authorizer', {
+			handler: GetAuthFunction,
+			identitySource: 'method.request.header.authorizationToken',
+			resultsCacheTtl: Duration.seconds(0),
+		});
+
 		// API Gateway stack
 		const api = new apigw.RestApi(this, 'PetsFoundationAPI', {
 			restApiName: `PetsFoundationAPI-${props.stage}`,
 			description: 'Pets Foundation API',
 			deployOptions: {
 				stageName: props.stage,
+			},
+			defaultMethodOptions: {
+				authorizer: auth,
 			},
 		});
 
@@ -26,11 +48,11 @@ export class ApiGwStack extends Stack {
 			description: 'Validate body request on foundation creation',
 			modelName: 'foundationModelCDK',
 			schema: {
-				type: JsonSchemaType.OBJECT,
+				type: apigw.JsonSchemaType.OBJECT,
 				required: ['foundationName'],
 				properties: {
-					foundationName: { type: JsonSchemaType.STRING },
-					foundationAddress: { type: JsonSchemaType.STRING },
+					foundationName: { type: apigw.JsonSchemaType.STRING },
+					foundationAddress: { type: apigw.JsonSchemaType.STRING },
 				},
 			},
 		});
@@ -41,13 +63,13 @@ export class ApiGwStack extends Stack {
 			description: 'Validate body request on pet creation',
 			modelName: 'petModelCDK',
 			schema: {
-				type: JsonSchemaType.OBJECT,
+				type: apigw.JsonSchemaType.OBJECT,
 				required: ['petName', 'petBreed', 'petType'],
 				properties: {
-					petName: { type: JsonSchemaType.STRING },
-					petAge: { type: JsonSchemaType.NUMBER },
-					petBreed: { type: JsonSchemaType.STRING },
-					petType: { type: JsonSchemaType.STRING },
+					petName: { type: apigw.JsonSchemaType.STRING },
+					petAge: { type: apigw.JsonSchemaType.NUMBER },
+					petBreed: { type: apigw.JsonSchemaType.STRING },
+					petType: { type: apigw.JsonSchemaType.STRING },
 				},
 			},
 		});
@@ -120,6 +142,7 @@ export class ApiGwStack extends Stack {
 		adoptPetByIdResource.addMethod('PATCH', adoptPetEndpoint);
 		petByIdResource.addMethod('DELETE', deletePetEndpoint);
 
+		// Little security for API Gateway
 		const plan = api.addUsagePlan('UsagePlan', {
 			name: 'EASY',
 			throttle: {

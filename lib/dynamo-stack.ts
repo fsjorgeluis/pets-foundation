@@ -1,7 +1,7 @@
 import { Stack, aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import { IMultiStackProps } from '../src/interfaces/multi-stack.interface';
+import { IMultiStackProps } from '../src/interfaces';
 
 export class DynamoStack extends Stack {
 	public readonly petFoundationTable: dynamodb.Table;
