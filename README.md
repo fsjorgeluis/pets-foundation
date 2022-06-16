@@ -4,7 +4,7 @@ Creación de una aplicación para la gestión de fundaciones de mascotas, se uti
 
 ## Primero que nada
 
-Asegurate de que tu cuenta de aws cuente con los permisos necesarios para crear los siguientes recursos:
+Asegúrate de que tu cuenta de aws cuente con los permisos necesarios para crear los siguientes recursos:
 
 - DynamoDB Tables
 - Lambda functions
