@@ -2,6 +2,16 @@
 
 Creación de una aplicación para la gestión de fundaciones de mascotas, se utiliza cdk para la infraestructura como código (IaC), separando el desarrollo en varios stacks (dynamo, lambdas, layers, authorizer, api gateway) para facilitar su futuro despliegue y mantención.
 
+## Primero que nada
+
+Asegurate de que tu cuenta de aws cuente con los permisos necesarios para crear los siguientes recursos:
+
+- DynamoDB Tables
+- Lambda functions
+- API's Gateway
+- S3 Buckets
+- SNS
+
 ## Funcionamiento
 
 ![cdk_pets_foundation](https://user-images.githubusercontent.com/20530235/174009852-1fa9b90d-739b-40c4-847e-13d0c67c99dd.png)
