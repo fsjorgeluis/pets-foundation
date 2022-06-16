@@ -1,6 +1,6 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { capitalize } = require('key-formatter');
+const { objectCleaner } = require('key-formatter');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
@@ -9,15 +9,18 @@ const SORT_KEY = process.env.SORT_KEY || '';
 
 const updatePet = async ({
 	foundationPK,
-	result,
+	dataToUpdate,
 	petId,
 }: {
 	foundationPK: string;
-	result: Record<string, any>;
+	dataToUpdate: Record<string, any>;
 	petId: string;
 }) => {
-	const updatedItem = typeof result === 'object' ? result : JSON.parse(result);
-	const updatedItemProperties = Object.keys(updatedItem);
+	const updatedItem =
+		typeof dataToUpdate === 'object' ? dataToUpdate : JSON.parse(dataToUpdate);
+	const filteredItem = objectCleaner(updatedItem);
+	const updatedItemProperties = Object.keys(filteredItem);
+
 	if (!updatedItem || updatedItemProperties.length < 1) {
 		return {
 			statusCode: 400,
@@ -35,7 +38,7 @@ const updatePet = async ({
 			[PRIMARY_KEY]: foundationPK.toUpperCase(),
 			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
 		},
-		UpdateExpression: `set ${capitalize(firstProperty[0])} = :${firstProperty}`,
+		UpdateExpression: `set ${firstProperty[0]} = :${firstProperty}`,
 		ExpressionAttributeValues: {},
 		ReturnValues: 'UPDATED_NEW',
 	};
@@ -44,7 +47,7 @@ const updatePet = async ({
 		updatedItem[`${firstProperty}`];
 
 	updatedItemProperties.forEach((property) => {
-		params.UpdateExpression += `, ${capitalize(property)} = :${property}`;
+		params.UpdateExpression += `, ${property} = :${property}`;
 		params.ExpressionAttributeValues[`:${property}`] = updatedItem[property];
 	});
 
@@ -59,9 +62,19 @@ const updatePet = async ({
 export const handler = async (event: any) => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
-	const { petStatus, ...result } = JSON.parse(event.body);
+	const { body } = JSON.parse(event.body);
+	const dataToUpdate = {
+		PetAge: body.petAge || '',
+		PetName: body.petName || '',
+		PetBreed: body.petBreed || '',
+		PetType: body.petType || '',
+	};
 	try {
-		const response = await updatePet({ foundationPK, petId, result });
+		const response = await updatePet({
+			foundationPK,
+			petId,
+			dataToUpdate,
+		});
 		return {
 			statusCode: 204,
 			body: JSON.stringify(response),

@@ -1,6 +1,6 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { wordNormalizer, capitalize } = require('key-formatter');
+const { wordNormalizer, capitalize, objectCleaner } = require('key-formatter');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
@@ -9,9 +9,7 @@ async function filterData(
 	filterType: Record<string, any>,
 	data: Record<string, any>
 ) {
-	const evaluator: any = Object.entries(filterType)
-		.filter(([key, value]) => value != '')
-		.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+	const evaluator: Record<string, any> = objectCleaner(filterType);
 
 	let response: Record<string, any> = {};
 

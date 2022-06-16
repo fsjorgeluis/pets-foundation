@@ -40,7 +40,7 @@ export const handler = async (event: any): Promise<any> => {
 		petType,
 		petAge = 0,
 	} = typeof event.body === 'object' ? event.body : JSON.parse(event.body);
-	console.log(event, foundationPk, petName, petBreed, petType, petAge);
+
 	try {
 		const response = await addPet(
 			{ PK: foundationPk },

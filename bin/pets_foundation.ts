@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
+import 'dotenv/config';
 
 import { DynamoStack } from '../lib/dynamo-stack';
 import { LayerStack } from '../lib/layer-stack';
@@ -11,7 +12,7 @@ const app = new cdk.App();
 const appPrefix = 'pets-foundation';
 const stage: string = app.node.tryGetContext('stage') || 'dev';
 const sharedProps = {
-	env: { account: '159688459304', region: 'us-east-1' },
+	env: { account: process.env.AWS_ACCOUNT, region: process.env.AWS_REGION },
 	stage: stage,
 };
 if (!['dev', 'prod'].includes(stage)) {
