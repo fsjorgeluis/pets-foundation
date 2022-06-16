@@ -43,6 +43,20 @@ PATCH
 
 ```
 
+## Layers
+
+Crear dentro de la carpeta `src` la siguiente estructura:
+
+```
+-/layers
+--/nodejs
+---/node_modules
+----/key-formatter
+-----index.js
+```
+
+El contenido del archivo `index.js` se encuentra en el siguiente [gist](https://gist.github.com/fsjorgeluis/55c4bfa67148034f867155516b319638).
+
 ## Comandos utiles de CDK
 
 - `cdk bootstrap` puede recibir un perfil `--profile <name>` y empaqueta la app para su futuro deploy.
