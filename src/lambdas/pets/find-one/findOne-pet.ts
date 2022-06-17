@@ -30,6 +30,7 @@ const findOne = async ({
 export const handler = async (event: any): Promise<Record<string, any>> => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
+
 	try {
 		const response = await findOne({ foundationPK, petId });
 		return {

@@ -71,16 +71,17 @@ El contenido del archivo `index.js` se encuentra en el siguiente [gist](https://
 
 ## Comandos utiles de CDK
 
+- `npm i` instala las dependencias del proyecto.
+- `npm run build` transpila código TypeScript a JavaScript.
+- `npm run watch` observa cambios y compila.
+- `npm run test` ejecuta las pruebas unitarias con jest.
 - `cdk bootstrap` puede recibir un perfil `--profile <name>` y empaqueta la app para su futuro deploy.
+- `cdk synth` crea una plantilla de CloudFormation.
 - `cdk deploy` puede recibir `--profile <name>` y contexto `--context | -c <key>=<value>` y un stack especifico o el wildcard `--all`.
 - `cdk destroy ` puede recibir `--profile <name>` y contexto `--context | -c <key>=<value>`, destruye los recursos creados.\*
 - `cdk diff` puede recibir `--profile <name>` y contexto `--context | -c <key>=<value>`, muestra cambios ocurridos en el proyecto con los desplegados actualmente.
-- `cdk synth` crea una plantilla de CloudFormation.
-- `npm run build` compila typescript a js.
-- `npm run watch` observa cambios y compila.
-- `npm run test` ejecuta las pruebas unitarias con jest.
 
-\* Nota: por defecto no elimina los registros de CloudWatch, tablas de dynamoDB, buckets y su contenido.
+\* Nota: por defecto no se eliminan los registros de CloudWatch, tablas de dynamoDB, buckets y su contenido, aunque si se agrega el atributo `removalPolicy` se puede elimiar los elementos: tabla dynamo y bucket s3 para este el último se puede complementar con el atributo `autoDeleteObjects` para vaciar el bucket antes de su eliminación.
 
 ## Mejoras por hacer
 

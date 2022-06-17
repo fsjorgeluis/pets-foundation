@@ -2,7 +2,6 @@ import {
 	Stack,
 	aws_apigateway as apigw,
 	aws_lambda as lambda,
-	CfnOutput,
 	Duration,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -15,15 +14,16 @@ export class ApiGwStack extends Stack {
 
 		const { lambdaStack } = props;
 
-		// Get authorizer lambda function avoiding circular dependency
+		// Get authorizer lambda function through avoiding circular dependency
 		const GetAuthFunction = lambda.Function.fromFunctionArn(
 			this,
-			'AuthFunction',
-			lambdaStack.petsFoundation.auth.functionArn
+			'CustomAuthorizer',
+			lambdaStack.petsFoundation.authorize.functionArn
 		);
 
-		// Authorizer for API Gateway
-		const auth = new apigw.TokenAuthorizer(this, 'Authorizer', {
+		// Authorizer definition for API Gateway
+		const auth = new apigw.TokenAuthorizer(this, 'TokenAuthorizer', {
+			identitySource: apigw.IdentitySource.header('authorizationToken'),
 			handler: GetAuthFunction,
 			resultsCacheTtl: Duration.seconds(0),
 		});
@@ -154,9 +154,9 @@ export class ApiGwStack extends Stack {
 		plan.addApiKey(key);
 
 		// Outputs
-		new CfnOutput(this, 'OutputApiEndpoint', {
-			exportName: `api-url-${props.stage}`,
-			value: api.url,
-		});
+		// new CfnOutput(this, 'OutputApiEndpoint', {
+		// 	exportName: `api-url-${props.stage}`,
+		// 	value: api.url,
+		// });
 	}
 }

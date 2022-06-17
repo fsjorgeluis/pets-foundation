@@ -3,6 +3,14 @@ import { LayerStack } from '../../lib/layer-stack';
 export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
 	return [
 		{
+			id: 'CustomAuthorizer',
+			name: 'authorizer',
+			src: 'authorizer',
+			action: 'authorize',
+			description: 'Authorizer for Pets Foundation API',
+			permission: '',
+		},
+		{
 			id: 'CreateFoundation',
 			name: 'create-foundation',
 			src: 'foundations/add',

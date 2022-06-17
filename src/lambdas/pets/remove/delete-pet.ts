@@ -31,6 +31,7 @@ const deleteOne = async ({
 export const handler = async (event: any): Promise<Record<string, any>> => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
+
 	try {
 		const response = await deleteOne({ foundationPK, petId });
 		return {

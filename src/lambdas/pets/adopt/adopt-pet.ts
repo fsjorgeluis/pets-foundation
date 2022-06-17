@@ -36,7 +36,7 @@ const adoptPet = async ({
 export const handler = async (event: any) => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
-	console.log(event);
+
 	try {
 		const response = await adoptPet({ foundationPK, petId });
 		return {

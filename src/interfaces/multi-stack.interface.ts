@@ -2,6 +2,7 @@ import { StackProps } from 'aws-cdk-lib';
 import { DynamoStack } from '../../lib/dynamo-stack';
 import { LayerStack } from '../../lib/layer-stack';
 import { LambdaStack } from '../../lib/lambda-stack';
+import { S3Stack } from '../../lib/s3-stack';
 
 export interface IMultiStackProps extends StackProps {
 	stage: string;
@@ -11,8 +12,13 @@ export interface IMultiStackProps extends StackProps {
 export interface IDynamoLambdaLayerProps extends IMultiStackProps {
 	dynamoStack: DynamoStack;
 	layerStack: LayerStack;
+	s3Stack: S3Stack;
 }
 
 export interface ILambdaStackProps extends IMultiStackProps {
 	lambdaStack: LambdaStack;
+}
+
+export interface IS3StackProps extends IMultiStackProps {
+	bucketName: string;
 }

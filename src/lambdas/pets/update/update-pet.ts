@@ -1,11 +1,13 @@
-const { DynamoDB } = require('aws-sdk');
+const { DynamoDB, S3 } = require('aws-sdk');
 
 const { objectCleaner } = require('key-formatter');
+const { putObjectToS3 } = require('s3-manager');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
+const BUCKET_NAME = process.env.BUCKET_NAME || '';
 
 const updatePet = async ({
 	foundationPK,
@@ -69,7 +71,16 @@ export const handler = async (event: any) => {
 		PetBreed: body.petBreed || '',
 		PetType: body.petType || '',
 	};
+
 	try {
+		// Put request to S3
+		await putObjectToS3(
+			{ S3 },
+			BUCKET_NAME,
+			`${new Date().toISOString()}-update-pet-request.json`,
+			JSON.parse(event.body)
+		);
+
 		const response = await updatePet({
 			foundationPK,
 			petId,

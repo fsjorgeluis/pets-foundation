@@ -1,4 +1,4 @@
-import { Stack, aws_dynamodb as dynamodb } from 'aws-cdk-lib';
+import { Stack, aws_dynamodb as dynamodb, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import { IMultiStackProps } from '../src/interfaces';
@@ -19,6 +19,7 @@ export class DynamoStack extends Stack {
 				type: dynamodb.AttributeType.STRING,
 			},
 			tableName: `PetsFoundation-${props?.stage}`,
+			removalPolicy: RemovalPolicy.DESTROY,
 		});
 	}
 }
