@@ -1,13 +1,13 @@
 import { Stack, aws_lambda as lambda } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import { IDynamoLambdaLayerProps } from '../src/interfaces';
+import { ILambdaStackProps } from '../src/interfaces';
 import { lambdaFunctions } from '../src/data';
 
 export class LambdaStack extends Stack {
 	public readonly petsFoundation: Record<string, any> = {};
 
-	constructor(scope: Construct, id: string, props: IDynamoLambdaLayerProps) {
+	constructor(scope: Construct, id: string, props: ILambdaStackProps) {
 		super(scope, id, props);
 
 		const {
@@ -16,9 +16,10 @@ export class LambdaStack extends Stack {
 			s3Stack: { petFoundationBucket },
 		} = props;
 
-		// Get array to start instantiating lambdas
+		/* A function that returns an array of lambda objects. */
 		const lambdas = lambdaFunctions(layerStack);
 
+		/* Creating a lambda function for each lambda in the lambdaFunctions array. */
 		for (let index = 0; index < lambdas.length; index++) {
 			const lambdaDef = lambdas[index];
 			const lambdaFunction = new lambda.Function(this, lambdaDef.id, {
@@ -39,14 +40,14 @@ export class LambdaStack extends Stack {
 			this.petsFoundation[lambdaDef.action] = lambdaFunction;
 		}
 
-		// Lambda authorizer instance
-		// this.petsFoundation['auth'] = new lambda.Function(this, 'Authorizer', {
-		// 	runtime: lambda.Runtime.NODEJS_16_X,
-		// 	handler: 'authorizer.handler',
-		// 	code: lambda.Code.fromAsset('./src/lambdas/authorizer'),
-		// 	description: 'Authorizer for Pets Foundation API',
-		// });
-
+		/**
+		 * This function takes a lambda and a string permission and assigns
+		 * the appropriate permissions to the DynamoDB table and S3 bucket
+		 * based on the string permission.
+		 * @param lambdaFunction - The lambda function that you want to grant
+		 * permissions to.
+		 * @param {string} permission - string permission to be granted.
+		 */
 		function assignPermission(
 			lambdaFunction: lambda.Function,
 			permission: string

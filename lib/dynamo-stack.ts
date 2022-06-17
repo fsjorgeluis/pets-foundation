@@ -1,4 +1,9 @@
-import { Stack, aws_dynamodb as dynamodb, RemovalPolicy } from 'aws-cdk-lib';
+import {
+	Stack,
+	aws_dynamodb as dynamodb,
+	RemovalPolicy,
+	StackProps,
+} from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import { IMultiStackProps } from '../src/interfaces';
@@ -6,7 +11,12 @@ import { IMultiStackProps } from '../src/interfaces';
 export class DynamoStack extends Stack {
 	public readonly petFoundationTable: dynamodb.Table;
 
-	constructor(scope: Construct, id: string, props?: IMultiStackProps) {
+	constructor(
+		scope: Construct,
+		id: string,
+		custom: IMultiStackProps,
+		props?: StackProps
+	) {
 		super(scope, id, props);
 
 		this.petFoundationTable = new dynamodb.Table(this, 'PetFoundation', {
@@ -18,7 +28,7 @@ export class DynamoStack extends Stack {
 				name: 'SK',
 				type: dynamodb.AttributeType.STRING,
 			},
-			tableName: `PetsFoundation-${props?.stage}`,
+			tableName: `PetsFoundation-${custom.stage}`,
 			removalPolicy: RemovalPolicy.DESTROY,
 		});
 	}

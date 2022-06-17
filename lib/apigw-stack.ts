@@ -3,32 +3,36 @@ import {
 	aws_apigateway as apigw,
 	aws_lambda as lambda,
 	Duration,
+	Arn,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import { ILambdaStackProps } from '../src/interfaces';
+import { IApiGwStackProps } from '../src/interfaces';
 
 export class ApiGwStack extends Stack {
-	constructor(scope: Construct, id: string, props: ILambdaStackProps) {
+	constructor(scope: Construct, id: string, props: IApiGwStackProps) {
 		super(scope, id, props);
 
 		const { lambdaStack } = props;
 
-		// Get authorizer lambda function through avoiding circular dependency
-		const GetAuthFunction = lambda.Function.fromFunctionArn(
+		/**
+		 * Getting the lambda function from the lambda stack avoiding circular 	* dependency.
+		 */
+		const GetAuthLambda = lambda.Function.fromFunctionArn(
 			this,
 			'CustomAuthorizer',
 			lambdaStack.petsFoundation.authorize.functionArn
 		);
 
-		// Authorizer definition for API Gateway
+		/* Creating a new authorizer for the API Gateway. */
 		const auth = new apigw.TokenAuthorizer(this, 'TokenAuthorizer', {
 			identitySource: apigw.IdentitySource.header('authorizationToken'),
-			handler: GetAuthFunction,
+			handler: GetAuthLambda,
+			authorizerName: `CustomAuthorizer-${props.stage}`,
 			resultsCacheTtl: Duration.seconds(0),
 		});
 
-		// API Gateway stack
+		/* Creating a new API Gateway. */
 		const api = new apigw.RestApi(this, 'PetsFoundationAPI', {
 			restApiName: `PetsFoundationAPI-${props.stage}`,
 			description: 'Pets Foundation API',
@@ -40,7 +44,22 @@ export class ApiGwStack extends Stack {
 			},
 		});
 
-		// API validation models
+		/* Giving permission to API Gateway to invoke the lambda function. */
+		new lambda.CfnPermission(this, 'CustomAuthorizerPermission', {
+			action: 'lambda:InvokeFunction',
+			principal: 'apigateway.amazonaws.com',
+			functionName: GetAuthLambda.functionArn,
+			sourceArn: Arn.format(
+				{
+					service: 'execute-api',
+					resource: api.restApiId,
+					resourceName: 'authorizers/*',
+				},
+				this
+			),
+		});
+
+		/* Creating a foundation validation model for the API Gateway. */
 		const foundationModel = new apigw.Model(this, 'FoundationModelValidator', {
 			restApi: api,
 			contentType: 'application/json',
@@ -56,6 +75,7 @@ export class ApiGwStack extends Stack {
 			},
 		});
 
+		/* Creating a pets validation model for the API Gateway. */
 		const petModel = new apigw.Model(this, 'PetModelValidator', {
 			restApi: api,
 			contentType: 'application/json',
@@ -73,7 +93,7 @@ export class ApiGwStack extends Stack {
 			},
 		});
 
-		// Foundation resources
+		/* Foundation resources. */
 		const foundationResource = api.root.addResource('foundations');
 		const createFoundationEndpoint = new apigw.LambdaIntegration(
 			lambdaStack.petsFoundation.createFoundation
@@ -81,7 +101,7 @@ export class ApiGwStack extends Stack {
 		const findAllFoundationEndpoint = new apigw.LambdaIntegration(
 			lambdaStack.petsFoundation.findAllFoundations
 		);
-		// Pets resources
+		/* Pets resources. */
 		const petResource = api.root.addResource('pets');
 		const petByIdResource = petResource.addResource('{petId}');
 		const adoptPetByIdResource = petByIdResource.addResource('adopt');
@@ -105,7 +125,8 @@ export class ApiGwStack extends Stack {
 			lambdaStack.petsFoundation.adoptPet
 		);
 
-		// Foundation methods
+		/* Adding a method to the resource. */
+		/* Foundation methods. */
 		foundationResource.addMethod('POST', createFoundationEndpoint, {
 			requestValidator: new apigw.RequestValidator(
 				this,
@@ -123,7 +144,7 @@ export class ApiGwStack extends Stack {
 
 		foundationResource.addMethod('GET', findAllFoundationEndpoint);
 
-		// Pets methods
+		/* Pets methods. */
 		petResource.addMethod('POST', createPetEndpoint, {
 			requestValidator: new apigw.RequestValidator(this, 'PetBodyValidator', {
 				restApi: api,
@@ -140,18 +161,6 @@ export class ApiGwStack extends Stack {
 		petByIdResource.addMethod('PATCH', updatePetEndpoint);
 		adoptPetByIdResource.addMethod('PATCH', adoptPetEndpoint);
 		petByIdResource.addMethod('DELETE', deletePetEndpoint);
-
-		// Little security for API Gateway based on api key
-		// const plan = api.addUsagePlan('UsagePlan', {
-		// 	name: 'EASY',
-		// 	throttle: {
-		// 		rateLimit: 20,
-		// 		burstLimit: 2,
-		// 	},
-		// });
-
-		// const key = api.addApiKey('ApiKey');
-		// plan.addApiKey(key);
 
 		// Outputs
 		// new CfnOutput(this, 'OutputApiEndpoint', {

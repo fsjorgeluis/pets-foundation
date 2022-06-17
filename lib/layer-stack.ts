@@ -1,12 +1,12 @@
-import { Stack, aws_lambda as lambda } from 'aws-cdk-lib';
+import { Stack, aws_lambda as lambda, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import { IMultiStackProps } from '../src/interfaces';
+import { ILayerStackProps } from '../src/interfaces';
 
 export class LayerStack extends Stack {
 	public readonly petFoundationLayer: lambda.LayerVersion;
 
-	constructor(scope: Construct, id: string, props: IMultiStackProps) {
+	constructor(scope: Construct, id: string, props?: ILayerStackProps) {
 		super(scope, id, props);
 
 		this.petFoundationLayer = new lambda.LayerVersion(

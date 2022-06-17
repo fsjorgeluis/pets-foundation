@@ -1,4 +1,4 @@
-// Help function to generate an IAM policy
+/* Help function to generate an IAM policy. */
 const generatePolicy = (principalId: string, effect: string, resource: any) => {
 	const authResponse: Record<string, any> = {};
 
@@ -15,7 +15,7 @@ const generatePolicy = (principalId: string, effect: string, resource: any) => {
 		authResponse.policyDocument = policyDocument;
 	}
 
-	// Optional output with custom properties of the String, Number or Boolean type.
+	/* Optional sample output with custom properties of the String, Number or Boolean type. */
 	authResponse.context = {
 		stringKey: 'stringval',
 		numberKey: 123,
