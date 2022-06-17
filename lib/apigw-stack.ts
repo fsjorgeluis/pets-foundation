@@ -141,17 +141,17 @@ export class ApiGwStack extends Stack {
 		adoptPetByIdResource.addMethod('PATCH', adoptPetEndpoint);
 		petByIdResource.addMethod('DELETE', deletePetEndpoint);
 
-		// Little security for API Gateway
-		const plan = api.addUsagePlan('UsagePlan', {
-			name: 'EASY',
-			throttle: {
-				rateLimit: 20,
-				burstLimit: 2,
-			},
-		});
+		// Little security for API Gateway based on api key
+		// const plan = api.addUsagePlan('UsagePlan', {
+		// 	name: 'EASY',
+		// 	throttle: {
+		// 		rateLimit: 20,
+		// 		burstLimit: 2,
+		// 	},
+		// });
 
-		const key = api.addApiKey('ApiKey');
-		plan.addApiKey(key);
+		// const key = api.addApiKey('ApiKey');
+		// plan.addApiKey(key);
 
 		// Outputs
 		// new CfnOutput(this, 'OutputApiEndpoint', {
