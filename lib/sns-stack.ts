@@ -10,7 +10,7 @@ export class SNSStack extends Stack {
 		super(scope, id, props);
 
 		this.petsFoundationSNS = new sns.Topic(this, 'AdoptionNotification', {
-			topicName: props?.topicName,
+			topicName: props.topicName,
 			displayName: 'pets-adoption-topic',
 		});
 

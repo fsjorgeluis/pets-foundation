@@ -12,7 +12,7 @@ const adoptPet = async ({
 }: {
 	foundationPK: string;
 	petId: string;
-}): Promise<unknown> => {
+}): Promise<Record<string, any> | unknown> => {
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
@@ -20,8 +20,10 @@ const adoptPet = async ({
 			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
 		},
 		UpdateExpression: `set PetStatus = :petStatus`,
+		ConditionExpression: 'PetStatus = :initVal',
 		ExpressionAttributeValues: {
 			':petStatus': 'happy',
+			':initVal': 'unhappy',
 		},
 		ReturnValues: 'UPDATED_NEW',
 	};
@@ -56,9 +58,11 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 	const { petId } = event.pathParameters;
 
 	try {
-		const response = await adoptPet({ foundationPK, petId });
-		const snsResponse = await emitSNS('pet-happy');
-		console.log(snsResponse);
+		const response: any = await adoptPet({ foundationPK, petId });
+		if (response.message === 'Pet updated successfully') {
+			const snsResponse = await emitSNS('pet-happy');
+			console.log(snsResponse);
+		}
 		return {
 			statusCode: 204,
 			body: JSON.stringify(response),

@@ -50,6 +50,7 @@ export class LambdaStack extends Stack {
 			this.petsFoundation[lambdaDefinition.action] = newLambda;
 		}
 
+		/* Instantiate lambda to manage email sending */
 		this.petsFoundation['snsEmail'] = new lambda.Function(this, 'SNSEmail', {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'sns-email.handler',
@@ -57,7 +58,7 @@ export class LambdaStack extends Stack {
 			description: 'SNS Email Lambda',
 		});
 
-		// petsFoundationSNS.grantPublish(this.petsFoundation.adoptPet);
+		/* Subscribing the SNS topic to the lambda functions. */
 		petsFoundationSNS.addSubscription(
 			new subscription.LambdaSubscription(this.petsFoundation.snsEmail)
 		);
