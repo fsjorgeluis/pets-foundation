@@ -9,7 +9,7 @@ import { Construct } from 'constructs';
 import { IMultiStackProps } from '../src/interfaces';
 
 export class DynamoStack extends Stack {
-	public readonly petFoundationTable: dynamodb.Table;
+	public readonly petsFoundationTable: dynamodb.Table;
 
 	constructor(
 		scope: Construct,
@@ -19,7 +19,7 @@ export class DynamoStack extends Stack {
 	) {
 		super(scope, id, props);
 
-		this.petFoundationTable = new dynamodb.Table(this, 'PetFoundation', {
+		this.petsFoundationTable = new dynamodb.Table(this, 'PetFoundation', {
 			partitionKey: {
 				name: 'PK',
 				type: dynamodb.AttributeType.STRING,

@@ -1,4 +1,8 @@
-import { Stack, aws_lambda as lambda } from 'aws-cdk-lib';
+import {
+	Stack,
+	aws_lambda as lambda,
+	aws_sns_subscriptions as subscription,
+} from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import { ILambdaStackProps } from '../src/interfaces';
@@ -12,8 +16,9 @@ export class LambdaStack extends Stack {
 
 		const {
 			layerStack,
-			dynamoStack: { petFoundationTable },
-			s3Stack: { petFoundationBucket },
+			dynamoStack: { petsFoundationTable },
+			s3Stack: { petsFoundationBucket },
+			snsStack: { petsFoundationSNS },
 		} = props;
 
 		/* A function that returns an array of lambda objects. */
@@ -21,49 +26,74 @@ export class LambdaStack extends Stack {
 
 		/* Creating a lambda function for each lambda in the lambdaFunctions array. */
 		for (let index = 0; index < lambdas.length; index++) {
-			const lambdaDef = lambdas[index];
-			const lambdaFunction = new lambda.Function(this, lambdaDef.id, {
+			const lambdaDefinition = lambdas[index];
+			const newLambda = new lambda.Function(this, lambdaDefinition.id, {
 				runtime: lambda.Runtime.NODEJS_16_X,
-				handler: `${lambdaDef.name}.handler`,
-				code: lambda.Code.fromAsset(`./src/lambdas/${lambdaDef.src}`),
-				layers: lambdaDef.layers || [],
-				description: lambdaDef.description,
+				handler: `${lambdaDefinition.name}.handler`,
+				code: lambda.Code.fromAsset(`./src/lambdas/${lambdaDefinition.src}`),
+				layers: lambdaDefinition.layers || [],
+				description: lambdaDefinition.description,
 				environment: {
-					TABLE_NAME: petFoundationTable.tableName,
+					TABLE_NAME: petsFoundationTable.tableName,
 					PRIMARY_KEY: 'PK',
 					SORT_KEY: 'SK',
-					BUCKET_NAME: petFoundationBucket.bucketName,
+					BUCKET_NAME: petsFoundationBucket.bucketName,
+					SNS_TOPIC_ARN: petsFoundationSNS.topicArn,
 				},
 			});
 
-			assignPermission(lambdaFunction, lambdaDef.permission);
-			this.petsFoundation[lambdaDef.action] = lambdaFunction;
+			assignPermission({
+				newLambda,
+				permission: lambdaDefinition.permission,
+				canPublish: lambdaDefinition.canPublish,
+			});
+			this.petsFoundation[lambdaDefinition.action] = newLambda;
 		}
 
+		this.petsFoundation['snsEmail'] = new lambda.Function(this, 'SNSEmail', {
+			runtime: lambda.Runtime.NODEJS_16_X,
+			handler: 'sns-email.handler',
+			code: lambda.Code.fromAsset('./src/lambdas/sns-email'),
+			description: 'SNS Email Lambda',
+		});
+
+		// petsFoundationSNS.grantPublish(this.petsFoundation.adoptPet);
+		petsFoundationSNS.addSubscription(
+			new subscription.LambdaSubscription(this.petsFoundation.snsEmail)
+		);
+
 		/**
-		 * This function takes a lambda and a string permission and assigns
-		 * the appropriate permissions to the DynamoDB table and S3 bucket
-		 * based on the string permission.
-		 * @param lambdaFunction - The lambda function that you want to grant
-		 * permissions to.
-		 * @param {string} permission - string permission to be granted.
+		 * Takes a lambda function, permission string and boolean, and grants
+		 * appropriate permissions to Dynamo, S3 bucket and SNS topic
+		 * @param lambdaFunction - lambda function to grant permissions to.
+		 * @param {string} permission - permission string to grant.
+		 * @param {boolean} canPublish - boolean to determine if lambda
+		 * function can publish to SNS topic.
 		 */
-		function assignPermission(
-			lambdaFunction: lambda.Function,
-			permission: string
-		) {
+		function assignPermission({
+			newLambda,
+			permission,
+			canPublish,
+		}: {
+			newLambda: lambda.Function;
+			permission: string;
+			canPublish: boolean;
+		}) {
 			switch (permission) {
 				case 'write':
-					petFoundationTable.grantWriteData(lambdaFunction);
-					petFoundationBucket.grantPut(lambdaFunction);
+					petsFoundationTable.grantWriteData(newLambda);
+					petsFoundationBucket.grantPut(newLambda);
 					break;
 				case 'read':
-					petFoundationTable.grantReadData(lambdaFunction);
-					petFoundationBucket.grantPut(lambdaFunction);
+					petsFoundationTable.grantReadData(newLambda);
+					petsFoundationBucket.grantPut(newLambda);
 					break;
 				case 'read-write':
-					petFoundationTable.grantReadWriteData(lambdaFunction);
-					petFoundationBucket.grantPut(lambdaFunction);
+					if (canPublish) {
+						petsFoundationSNS.grantPublish(newLambda);
+					}
+					petsFoundationTable.grantReadWriteData(newLambda);
+					petsFoundationBucket.grantPut(newLambda);
 					break;
 				default:
 					break;

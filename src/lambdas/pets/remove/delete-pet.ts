@@ -11,7 +11,7 @@ const deleteOne = async ({
 }: {
 	foundationPK: string;
 	petId: string;
-}) => {
+}): Promise<unknown> => {
 	const params = {
 		TableName: TABLE_NAME,
 		Key: {

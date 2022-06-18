@@ -4,14 +4,14 @@ import { Construct } from 'constructs';
 import { ILayerStackProps } from '../src/interfaces';
 
 export class LayerStack extends Stack {
-	public readonly petFoundationLayer: lambda.LayerVersion;
+	public readonly petsFoundationLayer: lambda.LayerVersion;
 
 	constructor(scope: Construct, id: string, props?: ILayerStackProps) {
 		super(scope, id, props);
 
-		this.petFoundationLayer = new lambda.LayerVersion(
+		this.petsFoundationLayer = new lambda.LayerVersion(
 			this,
-			'PetFoundationLayer',
+			'PetsFoundationLayer',
 			{
 				compatibleRuntimes: [
 					lambda.Runtime.NODEJS_14_X,

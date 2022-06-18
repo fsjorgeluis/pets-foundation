@@ -1,5 +1,9 @@
 /* Help function to generate an IAM policy. */
-const generatePolicy = (principalId: string, effect: string, resource: any) => {
+const generatePolicy = (
+	principalId: string,
+	effect: string,
+	resource: any
+): Record<string, any> => {
 	const authResponse: Record<string, any> = {};
 
 	authResponse.principalId = principalId;
@@ -24,7 +28,7 @@ const generatePolicy = (principalId: string, effect: string, resource: any) => {
 	return authResponse;
 };
 
-export const handler = (event: any, context: any, callback: any) => {
+export const handler = (event: any, context: any, callback: any): void => {
 	const token = event.authorizationToken;
 	switch (token) {
 		case 'allow':

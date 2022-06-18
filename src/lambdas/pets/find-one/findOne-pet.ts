@@ -9,7 +9,7 @@ const findOne = async ({
 }: {
 	foundationPK: string;
 	petId: string;
-}) => {
+}): Promise<any> => {
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',

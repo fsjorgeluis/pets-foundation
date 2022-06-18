@@ -12,7 +12,7 @@ const BUCKET_NAME = process.env.BUCKET_NAME || '';
 const addPet = async (
 	pk: Record<string, any>,
 	petData: Record<string, any>
-) => {
+): Promise<unknown> => {
 	const ID =
 		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 
@@ -34,7 +34,7 @@ const addPet = async (
 	}
 };
 
-export const handler = async (event: any): Promise<any> => {
+export const handler = async (event: any): Promise<Record<string, any>> => {
 	const { foundationPk } = event.headers;
 	const {
 		petName,

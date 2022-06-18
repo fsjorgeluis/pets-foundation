@@ -4,7 +4,11 @@ const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
-const deleteOne = async ({ foundationId }: { foundationId: string }) => {
+const deleteOne = async ({
+	foundationId,
+}: {
+	foundationId: string;
+}): Promise<unknown> => {
 	const params = {
 		TableName: TABLE_NAME,
 		Key: {

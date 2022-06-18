@@ -5,9 +5,10 @@ import 'dotenv/config';
 
 import { DynamoStack } from '../lib/dynamo-stack';
 import { LayerStack } from '../lib/layer-stack';
+import { S3Stack } from '../lib/s3-stack';
 import { LambdaStack } from '../lib/lambda-stack';
 import { ApiGwStack } from '../lib/apigw-stack';
-import { S3Stack } from '../lib/s3-stack';
+import { SNSStack } from '../lib/sns-stack';
 
 const app = new cdk.App();
 const appPrefix = 'pets-foundation';
@@ -49,6 +50,14 @@ const s3Stack = new S3Stack(app, 'S3Stack', {
 	description: 'Pets Foundation S3 Bucket',
 });
 
+/* Creating a new SNS stack. */
+const snsStack = new SNSStack(app, 'SNSStack', {
+	...sharedProps,
+	topicName: `${appPrefix}-sns-topic-${stage}`,
+	stage: stage,
+	description: 'Pets Foundation SNS',
+});
+
 /* Creating a new lambda stack. */
 const lambdaStack = new LambdaStack(app, 'LambdaStack', {
 	...sharedProps,
@@ -58,6 +67,7 @@ const lambdaStack = new LambdaStack(app, 'LambdaStack', {
 	layerStack: layerStack,
 	dynamoStack: dynamoStack,
 	s3Stack: s3Stack,
+	snsStack: snsStack,
 });
 
 /* Creating a new API Gateway stack. */

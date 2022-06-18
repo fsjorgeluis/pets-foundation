@@ -1,6 +1,6 @@
 import { LayerStack } from '../../lib/layer-stack';
 
-export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
+export const lambdaFunctions = ({ petsFoundationLayer }: LayerStack) => {
 	return [
 		{
 			id: 'CustomAuthorizer',
@@ -9,15 +9,17 @@ export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
 			action: 'authorize',
 			description: 'Authorizer for Pets Foundation API',
 			permission: '',
+			canPublish: false,
 		},
 		{
 			id: 'CreateFoundation',
 			name: 'create-foundation',
 			src: 'foundations/add',
-			layers: [petFoundationLayer],
+			layers: [petsFoundationLayer],
 			action: 'createFoundation',
 			description: 'Create a new foundation',
 			permission: 'write',
+			canPublish: false,
 		},
 		{
 			id: 'FindAllFoundations',
@@ -26,24 +28,27 @@ export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
 			action: 'findAllFoundations',
 			description: 'Find all foundations',
 			permission: 'read',
+			canPublish: false,
 		},
 		{
 			id: 'CreatePet',
 			name: 'create-pet',
 			src: 'pets/add',
-			layers: [petFoundationLayer],
+			layers: [petsFoundationLayer],
 			action: 'addPet',
 			description: 'Add a new pet',
 			permission: 'write',
+			canPublish: false,
 		},
 		{
 			id: 'FindAllPets',
 			name: 'findAll-pet',
 			src: 'pets/find-all',
-			layers: [petFoundationLayer],
+			layers: [petsFoundationLayer],
 			action: 'findAllPets',
 			description: 'Find all pets for specific foundation',
 			permission: 'read',
+			canPublish: false,
 		},
 		{
 			id: 'FindOnePet',
@@ -52,15 +57,17 @@ export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
 			action: 'findOnePet',
 			description: 'Find one pet for specific foundation by id',
 			permission: 'read',
+			canPublish: false,
 		},
 		{
 			id: 'UpdatePet',
 			name: 'update-pet',
 			src: 'pets/update',
-			layers: [petFoundationLayer],
+			layers: [petsFoundationLayer],
 			action: 'updatePet',
 			description: 'Update one pet for specific foundation by id',
 			permission: 'read-write',
+			canPublish: false,
 		},
 		{
 			id: 'DeletePet',
@@ -69,6 +76,7 @@ export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
 			action: 'removePet',
 			description: 'Delete one pet for specific foundation by id',
 			permission: 'read-write',
+			canPublish: false,
 		},
 		{
 			id: 'AdoptPet',
@@ -77,6 +85,7 @@ export const lambdaFunctions = ({ petFoundationLayer }: LayerStack) => {
 			action: 'adoptPet',
 			description: 'Adopt one pet for specific foundation by id',
 			permission: 'read-write',
+			canPublish: true,
 		},
 	];
 };

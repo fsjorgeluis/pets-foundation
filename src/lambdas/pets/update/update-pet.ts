@@ -17,7 +17,7 @@ const updatePet = async ({
 	foundationPK: string;
 	dataToUpdate: Record<string, any>;
 	petId: string;
-}) => {
+}): Promise<unknown> => {
 	const updatedItem =
 		typeof dataToUpdate === 'object' ? dataToUpdate : JSON.parse(dataToUpdate);
 	const filteredItem = objectCleaner(updatedItem);
@@ -61,7 +61,7 @@ const updatePet = async ({
 	}
 };
 
-export const handler = async (event: any) => {
+export const handler = async (event: any): Promise<Record<string, any>> => {
 	const { foundationPK } = event.headers;
 	const { petId } = event.pathParameters;
 	const body = JSON.parse(event.body);

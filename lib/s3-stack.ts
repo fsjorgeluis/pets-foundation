@@ -4,12 +4,12 @@ import { Construct } from 'constructs';
 import { IS3StackProps } from '../src/interfaces';
 
 export class S3Stack extends Stack {
-	public readonly petFoundationBucket: s3.Bucket;
+	public readonly petsFoundationBucket: s3.Bucket;
 
 	constructor(scope: Construct, id: string, props?: IS3StackProps) {
 		super(scope, id, props);
 
-		this.petFoundationBucket = new s3.Bucket(this, 'PetFoundationBucket', {
+		this.petsFoundationBucket = new s3.Bucket(this, 'PetsFoundationBucket', {
 			versioned: false,
 			bucketName: props?.bucketName,
 			publicReadAccess: false,

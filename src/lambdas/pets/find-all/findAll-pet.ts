@@ -8,7 +8,7 @@ const TABLE_NAME = process.env.TABLE_NAME || '';
 async function filterData(
 	filterType: Record<string, any>,
 	data: Record<string, any>
-) {
+): Promise<Record<string, any>> {
 	const evaluator: Record<string, any> = objectCleaner(filterType);
 
 	let response: Record<string, any> = {};
@@ -39,7 +39,7 @@ async function filterData(
 	return response;
 }
 
-const findAll = async (foundation: string) => {
+const findAll = async (foundation: string): Promise<any> => {
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',

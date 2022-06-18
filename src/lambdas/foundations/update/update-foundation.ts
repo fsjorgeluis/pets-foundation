@@ -10,7 +10,7 @@ const updateFoundation = async ({
 }: {
 	body: Record<string, any>;
 	foundationId: string;
-}) => {
+}): Promise<unknown> => {
 	const updatedItem = typeof body === 'object' ? body : JSON.parse(body);
 	const updatedItemProperties = Object.keys(updatedItem);
 	if (!updatedItem || updatedItemProperties.length < 1) {
@@ -50,7 +50,7 @@ const updateFoundation = async ({
 	}
 };
 
-export const handler = async (event: any) => {
+export const handler = async (event: any): Promise<Record<string, any>> => {
 	try {
 		const response = await updateFoundation(event);
 		return {
