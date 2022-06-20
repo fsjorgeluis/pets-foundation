@@ -1,6 +1,7 @@
-import { LayerStack } from '../../lib/layer-stack';
+// import { LayerStack } from '../../lib/layer-stack';
+import { ILayerVersion } from 'aws-cdk-lib/aws-lambda';
 
-export const lambdaFunctions = ({ petsFoundationLayer }: LayerStack) => {
+export const lambdaFunctions = (sharedLayer: ILayerVersion) => {
 	return [
 		{
 			id: 'CustomAuthorizer',
@@ -15,7 +16,7 @@ export const lambdaFunctions = ({ petsFoundationLayer }: LayerStack) => {
 			id: 'CreateFoundation',
 			name: 'create-foundation',
 			src: 'foundations/add',
-			layers: [petsFoundationLayer],
+			layers: [sharedLayer],
 			action: 'createFoundation',
 			description: 'Create a new foundation',
 			permission: 'write',
@@ -34,7 +35,7 @@ export const lambdaFunctions = ({ petsFoundationLayer }: LayerStack) => {
 			id: 'CreatePet',
 			name: 'create-pet',
 			src: 'pets/add',
-			layers: [petsFoundationLayer],
+			layers: [sharedLayer],
 			action: 'addPet',
 			description: 'Add a new pet',
 			permission: 'write',
@@ -44,7 +45,7 @@ export const lambdaFunctions = ({ petsFoundationLayer }: LayerStack) => {
 			id: 'FindAllPets',
 			name: 'findAll-pet',
 			src: 'pets/find-all',
-			layers: [petsFoundationLayer],
+			layers: [sharedLayer],
 			action: 'findAllPets',
 			description: 'Find all pets for specific foundation',
 			permission: 'read',
@@ -63,7 +64,7 @@ export const lambdaFunctions = ({ petsFoundationLayer }: LayerStack) => {
 			id: 'UpdatePet',
 			name: 'update-pet',
 			src: 'pets/update',
-			layers: [petsFoundationLayer],
+			layers: [sharedLayer],
 			action: 'updatePet',
 			description: 'Update one pet for specific foundation by id',
 			permission: 'read-write',

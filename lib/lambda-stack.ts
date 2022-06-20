@@ -2,6 +2,7 @@ import {
 	Stack,
 	aws_lambda as lambda,
 	aws_sns_subscriptions as subscription,
+	aws_ssm as ssm,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -15,14 +16,28 @@ export class LambdaStack extends Stack {
 		super(scope, id, props);
 
 		const {
-			layerStack,
+			// layerStack,
 			dynamoStack: { petsFoundationTable },
 			s3Stack: { petsFoundationBucket },
 			snsStack: { petsFoundationSNS },
 		} = props;
 
+		/* Getting the value of the parameterName from the SSM Parameter Store. */
+		const baseLayerArn = ssm.StringParameter.fromStringParameterName(
+			this,
+			'BaseLayerArn',
+			`base-layer-${props.stage}`
+		);
+
+		/* Creating a layer version from the baseLayerArn. */
+		const sharedLayer = lambda.LayerVersion.fromLayerVersionArn(
+			this,
+			'SharedLayer',
+			baseLayerArn.stringValue
+		);
+
 		/* A function that returns an array of lambda objects. */
-		const lambdas = lambdaFunctions(layerStack);
+		const lambdas = lambdaFunctions(sharedLayer);
 
 		/* Creating a lambda function for each lambda in the lambdaFunctions array. */
 		for (let index = 0; index < lambdas.length; index++) {

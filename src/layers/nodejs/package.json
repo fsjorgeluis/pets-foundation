@@ -1,0 +1,14 @@
+{
+	"name": "nodejs",
+	"version": "0.0.1",
+	"description": "packages to share between lambdas",
+	"main": "index.js",
+	"dependencies": {},
+	"devDependencies": {},
+	"keywords": [
+		"nodejs",
+		"lambda"
+	],
+	"author": "Jorge Fernandez",
+	"license": "ISC"
+}
