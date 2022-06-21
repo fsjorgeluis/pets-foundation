@@ -1,4 +1,4 @@
-# CDK TypeScript: proyecto "Pet Foundation"
+# CDK TypeScript: proyecto "Pets Foundation"
 
 Creación de una aplicación para la gestión de fundaciones de mascotas, se utiliza cdk para la infraestructura como código (IaC), separando el desarrollo en varios stacks (dynamo, lambdas, layers, authorizer, api gateway) para facilitar su futuro despliegue y mantención.
 
