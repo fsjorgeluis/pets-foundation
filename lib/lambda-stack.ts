@@ -3,6 +3,7 @@ import {
 	aws_lambda as lambda,
 	aws_sns_subscriptions as subscription,
 	aws_ssm as ssm,
+	aws_iam as iam,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -16,7 +17,6 @@ export class LambdaStack extends Stack {
 		super(scope, id, props);
 
 		const {
-			// layerStack,
 			dynamoStack: { petsFoundationTable },
 			s3Stack: { petsFoundationBucket },
 			snsStack: { petsFoundationSNS },
@@ -70,8 +70,31 @@ export class LambdaStack extends Stack {
 			runtime: lambda.Runtime.NODEJS_16_X,
 			handler: 'sns-email.handler',
 			code: lambda.Code.fromAsset('./src/lambdas/sns-email'),
+			layers: [sharedLayer],
 			description: 'SNS Email Lambda',
+			environment: {
+				EMAIL_USER: props.emailUser || '',
+				EMAIL_PASSWORD: props.emailPassword || '',
+				EMAIL_FROM: props.emailFrom || '',
+				EMAIL_TO: props.emailTo || '',
+			},
 		});
+
+		this.petsFoundation['snsEmail'].addToRolePolicy(
+			new iam.PolicyStatement({
+				effect: iam.Effect.ALLOW,
+				actions: [
+					'ses:SendEmail',
+					'ses:SendRawEmail',
+					'ses:SendTemplatedEmail',
+				],
+				resources: [
+					`arn:aws:ses:${props.env?.region}:${
+						Stack.of(this).account
+					}:identity/${props.emailFrom}`,
+				],
+			})
+		);
 
 		/* Subscribing the SNS topic to the lambda functions. */
 		petsFoundationSNS.addSubscription(

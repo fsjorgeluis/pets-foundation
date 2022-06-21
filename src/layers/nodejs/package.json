@@ -1,10 +1,8 @@
 {
-	"name": "nodejs",
+	"name": "common-npms",
 	"version": "0.0.1",
-	"description": "packages to share between lambdas",
+	"description": "npm packages to share between lambdas",
 	"main": "index.js",
-	"dependencies": {},
-	"devDependencies": {},
 	"keywords": [
 		"nodejs",
 		"lambda"

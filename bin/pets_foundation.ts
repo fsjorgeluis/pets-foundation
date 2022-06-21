@@ -68,6 +68,11 @@ const lambdaStack = new LambdaStack(app, 'LambdaStack', {
 	dynamoStack: dynamoStack,
 	s3Stack: s3Stack,
 	snsStack: snsStack,
+
+	emailUser: process.env.EMAIL_USER,
+	emailPassword: process.env.EMAIL_PASSWORD,
+	emailFrom: process.env.EMAIL_FROM,
+	emailTo: process.env.EMAIL_TO,
 });
 
 /* Creating a new API Gateway stack. */

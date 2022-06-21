@@ -1,6 +1,10 @@
 const { DynamoDB } = require('aws-sdk');
 
-const { wordNormalizer, capitalize, objectCleaner } = require('key-formatter');
+const {
+	wordNormalizer,
+	capitalize,
+	objectCleaner,
+} = require('/opt/custom/nodejs/node_modules/key-formatter');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';

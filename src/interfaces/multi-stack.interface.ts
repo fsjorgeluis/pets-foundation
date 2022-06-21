@@ -8,6 +8,10 @@ import { SNSStack } from '../../lib/sns-stack';
 export interface IMultiStackProps {
 	stage: string;
 	name: string;
+	emailUser?: string;
+	emailPassword?: string;
+	emailFrom?: string;
+	emailTo?: string;
 }
 
 export interface ILayerStackProps

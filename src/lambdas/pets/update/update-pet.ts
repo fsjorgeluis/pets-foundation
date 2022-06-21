@@ -1,7 +1,9 @@
 const { DynamoDB, S3 } = require('aws-sdk');
 
-const { objectCleaner } = require('key-formatter');
-const { putObjectToS3 } = require('s3-manager');
+const {
+	objectCleaner,
+} = require('/opt/custom/nodejs/node_modules/key-formatter');
+const { putObjectToS3 } = require('/opt/custom/nodejs/node_modules/s3-manager');
 
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
