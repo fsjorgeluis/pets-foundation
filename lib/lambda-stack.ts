@@ -66,21 +66,25 @@ export class LambdaStack extends Stack {
 		}
 
 		/* Instantiate lambda to manage email sending */
-		this.petsFoundation['snsEmail'] = new lambda.Function(this, 'SNSEmail', {
-			runtime: lambda.Runtime.NODEJS_16_X,
-			handler: 'sns-email.handler',
-			code: lambda.Code.fromAsset('./src/lambdas/sns-email'),
-			layers: [sharedLayer],
-			description: 'SNS Email Lambda',
-			environment: {
-				EMAIL_USER: props.emailUser || '',
-				EMAIL_PASSWORD: props.emailPassword || '',
-				EMAIL_FROM: props.emailFrom || '',
-				EMAIL_TO: props.emailTo || '',
-			},
-		});
+		this.petsFoundation['sendEmail'] = new lambda.Function(
+			this,
+			'PetsFoundationEmailManager',
+			{
+				runtime: lambda.Runtime.NODEJS_16_X,
+				handler: 'send-email.handler',
+				code: lambda.Code.fromAsset('./src/lambdas/emails'),
+				layers: [sharedLayer],
+				description: 'Send Email Lambda',
+				environment: {
+					EMAIL_USER: props.emailUser || '',
+					EMAIL_PASSWORD: props.emailPassword || '',
+					EMAIL_FROM: props.emailFrom || '',
+					EMAIL_TO: props.emailTo || '',
+				},
+			}
+		);
 
-		this.petsFoundation['snsEmail'].addToRolePolicy(
+		this.petsFoundation['sendEmail'].addToRolePolicy(
 			new iam.PolicyStatement({
 				effect: iam.Effect.ALLOW,
 				actions: [
@@ -98,7 +102,7 @@ export class LambdaStack extends Stack {
 
 		/* Subscribing the SNS topic to the lambda functions. */
 		petsFoundationSNS.addSubscription(
-			new subscription.LambdaSubscription(this.petsFoundation.snsEmail)
+			new subscription.LambdaSubscription(this.petsFoundation.sendEmail)
 		);
 
 		/**

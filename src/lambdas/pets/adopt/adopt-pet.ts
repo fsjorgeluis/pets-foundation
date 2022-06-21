@@ -38,7 +38,6 @@ const adoptPet = async ({
 
 const emitSNS = async (event: any) => {
 	const sns = new SNS();
-	// const eventText = JSON.stringify(event, null, 2);
 
 	const params = {
 		Message: JSON.stringify(event.body, null, 2),
@@ -62,7 +61,8 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 		const response: any = await adoptPet({ foundationPK, petId });
 		if (response.message === 'Pet updated successfully') {
 			const snsResponse = await emitSNS({
-				subject: 'pet-happy',
+				event: 'pet-happy',
+				subject: 'Adoptaron una mascota! 🎉🎉🎉',
 				body: response.data,
 			});
 			console.log(snsResponse);
