@@ -1,6 +1,7 @@
 const { DynamoDB, S3 } = require('aws-sdk');
 
 const {
+	keyFormatter,
 	objectCleaner,
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 const { putObjectToS3 } = require('/opt/custom/nodejs/node_modules/s3-manager');
@@ -12,11 +13,11 @@ const SORT_KEY = process.env.SORT_KEY || '';
 const BUCKET_NAME = process.env.BUCKET_NAME || '';
 
 const updatePet = async ({
-	foundationPK,
+	pk,
 	dataToUpdate,
 	petId,
 }: {
-	foundationPK: string;
+	pk: string;
 	dataToUpdate: Record<string, any>;
 	petId: string;
 }): Promise<unknown> => {
@@ -39,8 +40,8 @@ const updatePet = async ({
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
-			[PRIMARY_KEY]: foundationPK.toUpperCase(),
-			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
+			[PRIMARY_KEY]: keyFormatter('FOUNDATION', pk),
+			[SORT_KEY]: keyFormatter('PET', petId),
 		},
 		UpdateExpression: `set ${firstProperty[0]} = :${firstProperty}`,
 		ExpressionAttributeValues: {},
@@ -64,7 +65,7 @@ const updatePet = async ({
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { foundationPK } = event.headers;
+	const { pk } = event.queryStringParameters;
 	const { petId } = event.pathParameters;
 	const body = JSON.parse(event.body);
 	const dataToUpdate = {
@@ -84,7 +85,7 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 		);
 
 		const response = await updatePet({
-			foundationPK,
+			pk,
 			petId,
 			dataToUpdate,
 		});

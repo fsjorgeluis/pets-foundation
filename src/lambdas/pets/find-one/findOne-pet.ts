@@ -1,21 +1,25 @@
 const { DynamoDB } = require('aws-sdk');
 
+const {
+	keyFormatter,
+} = require('/opt/custom/nodejs/node_modules/key-formatter');
+
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 
 const findOne = async ({
-	foundationPK,
+	pk,
 	petId,
 }: {
-	foundationPK: string;
+	pk: string;
 	petId: string;
 }): Promise<any> => {
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
 		ExpressionAttributeValues: {
-			':pk': foundationPK.toUpperCase(),
-			':sk': `PET#${petId.toUpperCase()}`,
+			':pk': keyFormatter('FOUNDATION', pk),
+			':sk': keyFormatter('PET', petId),
 		},
 	};
 
@@ -28,11 +32,11 @@ const findOne = async ({
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { foundationPK } = event.headers;
+	const { pk } = event.queryStringParameters;
 	const { petId } = event.pathParameters;
 
 	try {
-		const response = await findOne({ foundationPK, petId });
+		const response = await findOne({ pk, petId });
 		return {
 			statusCode: 200,
 			body: JSON.stringify(response.Items),

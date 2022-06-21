@@ -1,6 +1,7 @@
 const { DynamoDB } = require('aws-sdk');
 
 const {
+	keyFormatter,
 	wordNormalizer,
 	capitalize,
 	objectCleaner,
@@ -43,12 +44,12 @@ async function filterData(
 	return response;
 }
 
-const findAll = async (foundation: string): Promise<any> => {
+const findAll = async (foundationPK: string): Promise<any> => {
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
 		ExpressionAttributeValues: {
-			':pk': foundation.toUpperCase(),
+			':pk': keyFormatter('FOUNDATION', foundationPK),
 			':sk': 'PET',
 		},
 	};
@@ -63,13 +64,13 @@ const findAll = async (foundation: string): Promise<any> => {
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { foundationPK } = event.headers;
+	const { pk } = event.queryStringParameters || '';
 	const petType = event.queryStringParameters?.petType || '';
 	const petName = event.queryStringParameters?.petName || '';
 	const petBreed = event.queryStringParameters?.petBreed || '';
 
 	try {
-		const response = await findAll(foundationPK);
+		const response = await findAll(pk);
 		const result = await filterData({ petType, petName, petBreed }, response);
 
 		return {

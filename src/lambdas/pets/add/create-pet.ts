@@ -12,14 +12,14 @@ const SORT_KEY = process.env.SORT_KEY || '';
 const BUCKET_NAME = process.env.BUCKET_NAME || '';
 
 const addPet = async (
-	pk: Record<string, any>,
+	{ PK }: { PK: string },
 	petData: Record<string, any>
 ): Promise<unknown> => {
 	const ID =
 		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 
 	petData['id'] = ID;
-	petData[PRIMARY_KEY] = pk.PK;
+	petData[PRIMARY_KEY] = keyFormatter('FOUNDATION', PK);
 	petData[SORT_KEY] = keyFormatter('PET', ID);
 	petData['PetStatus'] = 'unhappy';
 
@@ -37,7 +37,7 @@ const addPet = async (
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { foundationPk } = event.headers;
+	const { pk } = event.queryStringParameters;
 	const {
 		petName,
 		petBreed,
@@ -55,7 +55,7 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 		);
 
 		const response = await addPet(
-			{ PK: foundationPk },
+			{ PK: pk },
 			{
 				PetAge: petAge,
 				PetName: petName,

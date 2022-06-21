@@ -1,5 +1,9 @@
 const { DynamoDB, SNS } = require('aws-sdk');
 
+const {
+	keyFormatter,
+} = require('/opt/custom/nodejs/node_modules/key-formatter');
+
 const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
@@ -7,17 +11,17 @@ const SORT_KEY = process.env.SORT_KEY || '';
 const SNS_TOPIC_ARN = process.env.SNS_TOPIC_ARN || '';
 
 const adoptPet = async ({
-	foundationPK,
+	pk,
 	petId,
 }: {
-	foundationPK: string;
+	pk: string;
 	petId: string;
 }): Promise<Record<string, any> | unknown> => {
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {
-			[PRIMARY_KEY]: foundationPK.toUpperCase(),
-			[SORT_KEY]: `PET#${petId.toUpperCase()}`,
+			[PRIMARY_KEY]: keyFormatter('FOUNDATION', pk),
+			[SORT_KEY]: keyFormatter('PET', petId),
 		},
 		UpdateExpression: `set PetStatus = :petStatus`,
 		ConditionExpression: 'PetStatus = :initVal',
@@ -54,11 +58,11 @@ const emitSNS = async (event: any) => {
 };
 
 export const handler = async (event: any): Promise<Record<string, any>> => {
-	const { foundationPK } = event.headers;
+	const { pk } = event.queryStringParameters;
 	const { petId } = event.pathParameters;
 
 	try {
-		const response: any = await adoptPet({ foundationPK, petId });
+		const response: any = await adoptPet({ pk, petId });
 		if (response.message === 'Pet updated successfully') {
 			const snsResponse = await emitSNS({
 				event: 'pet-happy',
