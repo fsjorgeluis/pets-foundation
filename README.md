@@ -11,6 +11,7 @@ Asegúrate de que tu cuenta de aws cuente con los permisos necesarios para crear
 - API's Gateway
 - S3 Buckets
 - SNS
+- SES
 
 Tambien recuerda crear el archivo `.env` utilizando como base el `.env.sample` encontrado en la raíz del proyecto.
 
@@ -55,19 +56,27 @@ PATCH
 
 ```
 
+Se emite un evento SNS al actualizar el estatus de la mascota, y se envía un email utilizando SES.
+
 ## Layers
 
 Crear dentro de la carpeta `src` la siguiente estructura:
 
 ```
 -/layers
+--/custom
+---/nodejs
+----/node_modules
+-----/key-formatter
+------index.js
+-----/s3-manager
+------index.js
 --/nodejs
 ---/node_modules
-----/key-formatter
------index.js
+----package.json
 ```
 
-El contenido del archivo `index.js` se encuentra en el siguiente [gist](https://gist.github.com/fsjorgeluis/55c4bfa67148034f867155516b319638).
+Se puede obtener el contenido de los archivos que se muestran en la estructura de carpetas `layers/custom`, en los siguientes gists, [`key-formatter/index.js`](https://gist.github.com/fsjorgeluis/55c4bfa67148034f867155516b319638) y [`s3-manager/index.js`](https://gist.github.com/fsjorgeluis/6c04533e74641af3e6280b28a890ce21).
 
 ## Comandos utiles de CDK
 
