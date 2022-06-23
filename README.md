@@ -93,6 +93,14 @@ Se puede obtener el contenido de los archivos que se muestran en la estructura d
 
 \* Nota: por defecto no se eliminan los registros de CloudWatch, tablas de dynamoDB, buckets y su contenido, aunque si se agrega el atributo `removalPolicy` se puede elimiar los elementos: tabla dynamo y bucket s3 para este el último se puede complementar con el atributo `autoDeleteObjects` para vaciar el bucket antes de su eliminación.
 
+## Extras
+
+En la carpeta doc, se encuentra la documentación de la API en formato:
+
+- YAML Swagger/OpenApi
+- JSON Swagger/OpenApi
+- JSON Postman
+
 ## Mejoras por hacer
 
 - Agregar unit test.
