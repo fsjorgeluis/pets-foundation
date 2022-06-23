@@ -24,6 +24,11 @@ Tras adoptar una mascota, se actualiza su estatus de `unhappy` a `happy`, se emi
 
 \* **Importante**: en modo sandbox SES solo permite enviar correos desde y para cuentas con identidades verificadas, por lo que se sugiere encarecidamente agregar desde la consola de aws las identidades que se usaran de prueba durante el modo de desarrollo.
 
+La Tabla de dynamoDB está estructurada de la siguiente forma utilizando el _composite key pattern_.
+
+![Foundation_Pet](https://user-images.githubusercontent.com/20530235/175405732-6ef03802-a408-47a9-ba2b-c44b3a5f163a.png)
+_Aggregate view_\*
+
 ## Endpoints disponibles
 
 Endpoints conectados a lambdas para la creación de una fundación u obtener todas las fundaciones registradas. Require: `Headers authorizationToken: allow`
