@@ -9,8 +9,9 @@
 		"watch": "tsc -w",
 		"test": "jest",
 		"cdk": "cdk",
+		"cdk:bootstrap": "cdk bootstrap --profile training",
 		"cdk:diff": "cdk diff --profile training -c stage=dev",
-		"cdk:deploy": " cdk deploy --profile training --context stage=dev --all",
+		"cdk:deploy": "cdk deploy --profile training --context stage=dev --all",
 		"cdk:destroy": "cdk destroy --profile training --context stage=dev --all"
 	},
 	"devDependencies": {

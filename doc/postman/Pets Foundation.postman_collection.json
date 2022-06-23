@@ -31,9 +31,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}foundations",
+							"raw": "{{API_URL}}/foundations",
 							"host": [
-								"{{API_URL}}foundations"
+								"{{API_URL}}"
+							],
+							"path": [
+								"foundations"
 							]
 						}
 					},
@@ -52,9 +55,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{API_URL}}foundations",
+							"raw": "{{API_URL}}/foundations",
 							"host": [
-								"{{API_URL}}foundations"
+								"{{API_URL}}"
+							],
+							"path": [
+								"foundations"
 							]
 						}
 					},
@@ -87,9 +93,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}pets?pk=<foundation_name>",
+							"raw": "{{API_URL}}/pets?pk=<foundation_name>",
 							"host": [
-								"{{API_URL}}pets"
+								"{{API_URL}}"
+							],
+							"path": [
+								"pets"
 							],
 							"query": [
 								{
@@ -115,9 +124,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{API_URL}}pets?pk=<foundation_name>",
+							"raw": "{{API_URL}}/pets?pk=<foundation_name>",
 							"host": [
-								"{{API_URL}}pets"
+								"{{API_URL}}"
+							],
+							"path": [
+								"pets"
 							],
 							"query": [
 								{
@@ -173,11 +185,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}pets/J1655839644649?pk=<foundation_name>",
+							"raw": "{{API_URL}}/pets/J1655839644649?pk=<foundation_name>",
 							"host": [
-								"{{API_URL}}pets"
+								"{{API_URL}}"
 							],
 							"path": [
+								"pets",
 								"J1655839644649"
 							],
 							"query": [
@@ -204,11 +217,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{API_URL}}pets/<petId>?pk=<foundation_name>",
+							"raw": "{{API_URL}}/pets/<petId>?pk=<foundation_name>",
 							"host": [
-								"{{API_URL}}pets"
+								"{{API_URL}}"
 							],
 							"path": [
+								"pets",
 								"<petId>"
 							],
 							"query": [
@@ -244,11 +258,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}pets/<petId>",
+							"raw": "{{API_URL}}/pets/<petId>",
 							"host": [
-								"{{API_URL}}pets"
+								"{{API_URL}}"
 							],
 							"path": [
+								"pets",
 								"<petId>"
 							]
 						}
@@ -277,11 +292,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}pets/<petId>/adopt?pk=<foundation_name>",
+							"raw": "{{API_URL}}/pets/<petId>/adopt?pk=<foundation_name>",
 							"host": [
-								"{{API_URL}}pets"
+								"{{API_URL}}"
 							],
 							"path": [
+								"pets",
 								"<petId>",
 								"adopt"
 							],
