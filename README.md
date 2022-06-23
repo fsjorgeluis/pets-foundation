@@ -22,6 +22,8 @@ Tambien recuerda crear el archivo `.env` utilizando como base el `.env.sample` e
 Los request que contengan un body se almacenan en formato JSON en un bucket S3.
 Tras adoptar una mascota, se actualiza su estatus de `unhappy` a `happy`, se emite un evento SNS que activa una lambda y esta notifica vía correo electrónico.
 
+\* **Importante**: en modo sandbox SES solo permite enviar correos desde y para cuentas con identidades verificadas, por lo que se sugiere encarecidamente agregar desde la consola de aws las identidades que se usaran de prueba durante el modo de desarrollo.
+
 ## Endpoints disponibles
 
 Endpoints conectados a lambdas para la creación de una fundación u obtener todas las fundaciones registradas. Require: `Headers authorizationToken: allow`
@@ -86,12 +88,12 @@ Se puede obtener el contenido de los archivos que se muestran en la estructura d
 - `npm run watch` observa cambios y compila.
 - `npm run test` ejecuta las pruebas unitarias con jest.
 - `cdk bootstrap` puede recibir un perfil `--profile <name>` y empaqueta la app para su futuro deploy.
-- `cdk synth` crea una plantilla de CloudFormation.
+- `cdk synth` crea una plantilla de CloudFormation utilizando el código del proyecto.
 - `cdk deploy` puede recibir `--profile <name>` y contexto `--context | -c <key>=<value>` y un stack especifico o el wildcard `--all`.
 - `cdk destroy ` puede recibir `--profile <name>` y contexto `--context | -c <key>=<value>`, destruye los recursos creados.\*
 - `cdk diff` puede recibir `--profile <name>` y contexto `--context | -c <key>=<value>`, muestra cambios ocurridos en el proyecto con los desplegados actualmente.
 
-\* Nota: por defecto no se eliminan los registros de CloudWatch, tablas de dynamoDB, buckets y su contenido, aunque si se agrega el atributo `removalPolicy` se puede elimiar los elementos: tabla dynamo y bucket s3 para este el último se puede complementar con el atributo `autoDeleteObjects` para vaciar el bucket antes de su eliminación.
+\* **Nota:** por defecto no se eliminan los registros de CloudWatch, tablas de dynamoDB, buckets y su contenido, aunque si se agrega el atributo `removalPolicy` se puede elimiar los elementos: tabla dynamo y bucket s3 para este el último se puede complementar con el atributo `autoDeleteObjects` para vaciar el bucket antes de su eliminación.
 
 ## Extras
 
