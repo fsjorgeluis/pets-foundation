@@ -1,21 +1,79 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { PetsFoundationStack } from '../lib/pets_foundation-stack';
+import 'dotenv/config';
+
+import { DynamoStack } from '../lib/dynamo-stack';
+import { LayerStack } from '../lib/layer-stack';
+import { S3Stack } from '../lib/s3-stack';
+import { LambdaStack } from '../lib/lambda-stack';
+import { ApiGwStack } from '../lib/apigw-stack';
+import { SNSStack } from '../lib/sns-stack';
 
 const app = new cdk.App();
-new PetsFoundationStack(app, 'PetsFoundationStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+const appPrefix = 'pets-foundation';
+const stage: string = app.node.tryGetContext('stage') || 'dev';
+const sharedProps = {
+	env: { account: process.env.AWS_ACCOUNT, region: process.env.AWS_REGION },
+};
+if (!['dev', 'prod'].includes(stage)) {
+	throw new Error(`Unknown environment: ${stage}`);
+}
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const dynamoStack = new DynamoStack(
+	app,
+	'DynamoStack',
+	{
+		stage: stage,
+		name: `${appPrefix}-dynamo-${stage}`,
+	},
+	{
+		...sharedProps,
+		description: 'DynamoDB stack',
+	}
+);
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+const layerStack = new LayerStack(app, 'LayerStack', {
+	...sharedProps,
+	name: `${appPrefix}-layer-${stage}`,
+	stage: stage,
+	description: 'Layers for Pets Foundation API',
+});
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+const s3Stack = new S3Stack(app, 'S3Stack', {
+	...sharedProps,
+	bucketName: `${appPrefix}-${process.env.AWS_BUCKET_NAME}-${stage}`,
+	stage: stage,
+	description: 'Pets Foundation S3 Bucket',
+});
+
+const snsStack = new SNSStack(app, 'SNSStack', {
+	...sharedProps,
+	topicName: `${appPrefix}-sns-topic-${stage}`,
+	stage: stage,
+	description: 'Pets Foundation SNS',
+});
+
+const lambdaStack = new LambdaStack(app, 'LambdaStack', {
+	...sharedProps,
+	name: `${appPrefix}-lambda-${stage}`,
+	stage: stage,
+	description: 'Pets Foundation Lambda Functions',
+	layerStack: layerStack,
+	dynamoStack: dynamoStack,
+	s3Stack: s3Stack,
+	snsStack: snsStack,
+
+	emailUser: process.env.EMAIL_USER,
+	emailPassword: process.env.EMAIL_PASSWORD,
+	emailFrom: process.env.EMAIL_FROM,
+	emailTo: process.env.EMAIL_TO,
+});
+
+new ApiGwStack(app, 'ApiStack', {
+	...sharedProps,
+	name: `${appPrefix}-api-${stage}`,
+	stage: stage,
+	lambdaStack: lambdaStack,
+	description: 'Pets Foundation API',
 });

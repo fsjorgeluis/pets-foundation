@@ -1,0 +1,302 @@
+{
+	"info": {
+		"_postman_id": "4a9e95dd-4d1e-4822-b5f4-073df203664d",
+		"name": "Pets Foundation",
+		"description": "Pets foundation API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Foundations",
+			"item": [
+				{
+					"name": "Add foundations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"foundationName\": \"Super Pets\",\r\n    \"foundationAddress\":\"Narnia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}foundations",
+							"host": [
+								"{{API_URL}}foundations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all foundation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}foundations",
+							"host": [
+								"{{API_URL}}foundations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pets",
+			"item": [
+				{
+					"name": "Add pet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"petName\": \"Lucky\",\r\n    \"petAge\": 1,\r\n    \"petBreed\": \"Syberian Husky\",\r\n    \"petType\": \"Dog\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}pets?pk=<foundation_name>",
+							"host": [
+								"{{API_URL}}pets"
+							],
+							"query": [
+								{
+									"key": "pk",
+									"value": "<foundation_name>",
+									"description": "Campo obligatorio, nombre de la fundación, insensible a mayusculas o espacios."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all pets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}pets?pk=<foundation_name>",
+							"host": [
+								"{{API_URL}}pets"
+							],
+							"query": [
+								{
+									"key": "pk",
+									"value": "<foundation_name>",
+									"description": "Campo requerido, nombre de la fundación, insensible a mayusculas o espacios."
+								},
+								{
+									"key": "petBreed",
+									"value": "Pitbull",
+									"description": "Campo opcional, raza de la mascota.",
+									"disabled": true
+								},
+								{
+									"key": "petName",
+									"value": "Speedy",
+									"description": "Campo opcional, nombre de la mascota.",
+									"disabled": true
+								},
+								{
+									"key": "petType",
+									"value": "dog",
+									"description": "Campo opcional, tipo de mascota.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one pet by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}pets/J1655839644649?pk=<foundation_name>",
+							"host": [
+								"{{API_URL}}pets"
+							],
+							"path": [
+								"J1655839644649"
+							],
+							"query": [
+								{
+									"key": "pk",
+									"value": "<foundation_name>",
+									"description": "Campo requerido, nombre de la fundación, insensible a mayusculas o espacios."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Release pet",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}pets/<petId>?pk=<foundation_name>",
+							"host": [
+								"{{API_URL}}pets"
+							],
+							"path": [
+								"<petId>"
+							],
+							"query": [
+								{
+									"key": "pk",
+									"value": "<foundation_name>",
+									"description": "Campo requerido, nombre de la fundación, insensible a mayusculas o espacios."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update pet info",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"petName\": \"Speedy\",\r\n    \"petAge\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}pets/<petId>",
+							"host": [
+								"{{API_URL}}pets"
+							],
+							"path": [
+								"<petId>"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adopt a pet",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "authorizationToken",
+								"value": "allow",
+								"description": "Tokens disponibles: allow, deny, unauthorized",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}pets/<petId>/adopt?pk=<foundation_name>",
+							"host": [
+								"{{API_URL}}pets"
+							],
+							"path": [
+								"<petId>",
+								"adopt"
+							],
+							"query": [
+								{
+									"key": "pk",
+									"value": "<foundation_name>",
+									"description": "Campo requerido, nombre de la fundación, insensible a mayusculas o espacios."
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

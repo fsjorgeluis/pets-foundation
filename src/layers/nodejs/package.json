@@ -1,0 +1,12 @@
+{
+	"name": "common-npms",
+	"version": "0.0.1",
+	"description": "npm packages to share between lambdas",
+	"main": "index.js",
+	"keywords": [
+		"nodejs",
+		"lambda"
+	],
+	"author": "Jorge Fernandez",
+	"license": "ISC"
+}
