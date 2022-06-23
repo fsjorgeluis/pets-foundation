@@ -592,7 +592,8 @@
 				"type": "apiKey",
 				"name": "authorizationToken",
 				"in": "header",
-				"x-amazon-apigateway-authtype": "custom"
+				"x-amazon-apigateway-authtype": "custom",
+				"description": "Options. allow, deny, unauthorized"
 			}
 		}
 	}

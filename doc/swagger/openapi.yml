@@ -381,3 +381,4 @@ components:
       name: 'authorizationToken'
       in: 'header'
       x-amazon-apigateway-authtype: 'custom'
+      description: Options. allow, deny, unauthorized
