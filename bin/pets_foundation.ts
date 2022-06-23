@@ -20,7 +20,6 @@ if (!['dev', 'prod'].includes(stage)) {
 	throw new Error(`Unknown environment: ${stage}`);
 }
 
-/* Creating a new DynamoDB stack. */
 const dynamoStack = new DynamoStack(
 	app,
 	'DynamoStack',
@@ -34,7 +33,6 @@ const dynamoStack = new DynamoStack(
 	}
 );
 
-/* Creating a new layer stack. */
 const layerStack = new LayerStack(app, 'LayerStack', {
 	...sharedProps,
 	name: `${appPrefix}-layer-${stage}`,
@@ -42,7 +40,6 @@ const layerStack = new LayerStack(app, 'LayerStack', {
 	description: 'Layers for Pets Foundation API',
 });
 
-/* Creating a new S3 bucket. */
 const s3Stack = new S3Stack(app, 'S3Stack', {
 	...sharedProps,
 	bucketName: `${appPrefix}-${process.env.AWS_BUCKET_NAME}-${stage}`,
@@ -50,7 +47,6 @@ const s3Stack = new S3Stack(app, 'S3Stack', {
 	description: 'Pets Foundation S3 Bucket',
 });
 
-/* Creating a new SNS stack. */
 const snsStack = new SNSStack(app, 'SNSStack', {
 	...sharedProps,
 	topicName: `${appPrefix}-sns-topic-${stage}`,
@@ -58,7 +54,6 @@ const snsStack = new SNSStack(app, 'SNSStack', {
 	description: 'Pets Foundation SNS',
 });
 
-/* Creating a new lambda stack. */
 const lambdaStack = new LambdaStack(app, 'LambdaStack', {
 	...sharedProps,
 	name: `${appPrefix}-lambda-${stage}`,
@@ -75,7 +70,6 @@ const lambdaStack = new LambdaStack(app, 'LambdaStack', {
 	emailTo: process.env.EMAIL_TO,
 });
 
-/* Creating a new API Gateway stack. */
 new ApiGwStack(app, 'ApiStack', {
 	...sharedProps,
 	name: `${appPrefix}-api-${stage}`,
