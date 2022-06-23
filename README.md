@@ -17,9 +17,10 @@ Tambien recuerda crear el archivo `.env` utilizando como base el `.env.sample` e
 
 ## Funcionamiento
 
-![cdk_pets_foundation](https://user-images.githubusercontent.com/20530235/174676493-04c846ec-532b-49a6-ad21-8654c2d7fe66.png)
-Los request se almacenan en formato JSON en un bucket S3.
-Tras adoptar una mascota, se actualiza su estatus de `unhappy` a `happy`, se emite un evento SNS llamado: `pet-happy` que notifica vía correo electrónico.
+![cdk_pets_foundation](https://user-images.githubusercontent.com/20530235/175189692-e766cb03-43e5-4e5a-80b7-654c8e28aecc.png)
+
+Los request que contengan un body se almacenan en formato JSON en un bucket S3.
+Tras adoptar una mascota, se actualiza su estatus de `unhappy` a `happy`, se emite un evento SNS que activa una lambda y esta notifica vía correo electrónico.
 
 ## Endpoints disponibles
 

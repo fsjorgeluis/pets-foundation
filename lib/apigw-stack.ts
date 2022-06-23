@@ -31,6 +31,7 @@ export class ApiGwStack extends Stack {
 			'Access-Control-Allow-Headers',
 		];
 
+		/* Mock integration that will be used to handle CORS requests. */
 		const standardCorsMockIntegration = new apigw.MockIntegration({
 			integrationResponses: [
 				{
@@ -53,6 +54,7 @@ export class ApiGwStack extends Stack {
 			},
 		});
 
+		/* Methods tha will be used in options to handle CORS requests. */
 		const optionsMethodResponse = {
 			statusCode: '200',
 			responseModels: {
@@ -90,9 +92,6 @@ export class ApiGwStack extends Stack {
 			deployOptions: {
 				stageName: props.stage,
 			},
-			// defaultMethodOptions: {
-			// 	authorizer: auth,
-			// },
 		});
 
 		/* Giving permission to API Gateway to invoke the lambda function. */
