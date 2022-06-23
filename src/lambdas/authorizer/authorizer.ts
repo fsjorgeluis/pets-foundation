@@ -25,6 +25,7 @@ const generatePolicy = (
 		numberKey: 123,
 		booleanKey: true,
 	};
+
 	return authResponse;
 };
 

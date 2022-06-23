@@ -27,12 +27,24 @@ export const handler = async (): Promise<Record<string, any>> => {
 		const response = await findAll();
 
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,GET',
+			},
 			statusCode: 200,
 			body: JSON.stringify(response.Items),
 		};
 	} catch (error) {
 		console.log('Error retrieving foundations: ', error);
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,GET',
+			},
 			statusCode: 500,
 			body: JSON.stringify(error),
 		};

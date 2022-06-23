@@ -39,12 +39,24 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 	try {
 		const response = await deleteOne({ pk, petId });
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,DELETE',
+			},
 			statusCode: 200,
 			body: JSON.stringify(response),
 		};
 	} catch (error) {
 		console.log('Error releasing pet: ', error);
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,DELETE',
+			},
 			statusCode: 500,
 			body: JSON.stringify(error),
 		};

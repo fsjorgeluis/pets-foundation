@@ -1,0 +1,605 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Pets Foundation API - dev",
+    "description": "API encargada de gestionar la adopción de mascotas",
+    "version": "2022-06-21T15:48:47Z"
+  },
+  "servers": [
+    {
+      "url": "https://fgrii554x4.execute-api.us-east-1.amazonaws.com{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "/dev"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/foundations": {
+      "get": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Obtiene todas las fundaciones registradas.",
+        "responses": {
+          "200": {
+            "description": "(OK) se obtuvieron todas las fundaciones.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "FoundationName": {
+                        "type": "string",
+                        "description": "Nombre de la fundación."
+                      },
+                      "FoundationAddress": {
+                        "type": "string",
+                        "description": "Dirección de la fundación."
+                      },
+                      "SK": {
+                        "type": "string",
+                        "description": "Sort key."
+                      },
+                      "PK": {
+                        "type": "string",
+                        "description": "Primary key."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Agrega una fundación.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/foundationModelCDK"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "(OK) se agregó la fundación correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito tras la creación de la fundación."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/pets": {
+      "get": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pk",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre de la fundación."
+          }
+        ],
+        "summary": "Obtiene todas las mascotas de una fundación.",
+        "responses": {
+          "200": {
+            "description": "(OK) se obtuvieron todas las mascotas de la pk (fundación) especificada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Id autogenerado para la mascota."
+                      },
+                      "PetName": {
+                        "type": "string",
+                        "description": "Nombre de la mascota."
+                      },
+                      "PetBreed": {
+                        "type": "string",
+                        "description": "Raza de la mascota."
+                      },
+                      "PetAge": {
+                        "type": "number",
+                        "description": "Edad de la mascota."
+                      },
+                      "PetType": {
+                        "type": "string",
+                        "description": "Tipo de mascota."
+                      },
+                      "SK": {
+                        "type": "string",
+                        "description": "Sort key."
+                      },
+                      "PK": {
+                        "type": "string",
+                        "description": "Primary key."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Agrega una mascota a la fundación.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pk",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre de la fundación."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/petModelCDK"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "(OK) se agregó la mascota a la (pk) fundación correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito tras la adición de mascota."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/pets/{petId}": {
+      "get": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Obtiene una mascota según su id y el pk (nombre de la fundación) al que pertenece.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "petId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id de la mascota."
+          },
+          {
+            "in": "query",
+            "name": "pk",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre de la fundación."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(OK) se obtienen la mascota según su id y el pk (nombre de la fundación).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Id autogenerado para la mascota."
+                    },
+                    "PetName": {
+                      "type": "string",
+                      "description": "Nombre de la mascota."
+                    },
+                    "PetBreed": {
+                      "type": "string",
+                      "description": "Raza de la mascota."
+                    },
+                    "PetAge": {
+                      "type": "number",
+                      "description": "Edad de la mascota."
+                    },
+                    "PetType": {
+                      "type": "string",
+                      "description": "Tipo de mascota."
+                    },
+                    "SK": {
+                      "type": "string",
+                      "description": "Sort key."
+                    },
+                    "PK": {
+                      "type": "string",
+                      "description": "Primary key."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Actualiza una mascota según su id y el pk (nombre de la fundación) al que pertenece.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "petId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id de la mascota."
+          },
+          {
+            "in": "query",
+            "name": "pk",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre de la fundación."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "petName": {
+                    "type": "string"
+                  },
+                  "petAge": {
+                    "type": "number"
+                  },
+                  "petBreed": {
+                    "type": "string"
+                  },
+                  "petType": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "(OK) se actualiza la mascota según su id y el pk (nombre de la fundación)."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Elimina el registro de una mascota utilizando su id y el pk (nombre de la fundación) al que pertence.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "petId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id de la mascota."
+          },
+          {
+            "in": "query",
+            "name": "pk",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre de la fundación."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(OK) se elimina el registro de la mascota según su id y el pk (nombre de la fundación).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito tras la adición de mascota."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/pets/{petId}/adopt": {
+      "patch": {
+        "security": [
+          {
+            "CustomAuthorizer-dev": []
+          }
+        ],
+        "summary": "Adopta una mascota según utilizando su id y el pk (nombre de la fundación) al que pertenece.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "petId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Id de la mascota."
+          },
+          {
+            "in": "query",
+            "name": "pk",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre de la fundación."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "(OK) se actualiza la mascota según su id y el pk (nombre de la fundación)."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "Forbidden": {
+        "description": "(Deny) acceso al recurso denegado explicitamente."
+      },
+      "Unauthorized": {
+        "description": "(Unauthorized) no hay autorización para llamar el recurso."
+      },
+      "NotFound": {
+        "description": "(NotFound) no se encontró el recurso."
+      },
+      "BadRequest": {
+        "description": "(BadRequest) la data enviada se encuentra mal formateada."
+      },
+      "ServerError": {
+        "description": "(ServerError) Error en el servidor."
+      }
+    },
+    "schemas": {
+      "foundationModelCDK": {
+        "required": [
+          "foundationName"
+        ],
+        "type": "object",
+        "properties": {
+          "foundationName": {
+            "type": "string"
+          },
+          "foundationAddress": {
+            "type": "string"
+          }
+        }
+      },
+      "petModelCDK": {
+        "required": [
+          "petBreed",
+          "petName",
+          "petType"
+        ],
+        "type": "object",
+        "properties": {
+          "petName": {
+            "type": "string"
+          },
+          "petAge": {
+            "type": "number"
+          },
+          "petBreed": {
+            "type": "string"
+          },
+          "petType": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "CustomAuthorizer-dev": {
+        "type": "apiKey",
+        "name": "authorizationToken",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "custom"
+      }
+    }
+  }
+}

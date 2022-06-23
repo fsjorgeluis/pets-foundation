@@ -74,12 +74,24 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 		const result = await filterData({ petType, petName, petBreed }, response);
 
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,GET',
+			},
 			statusCode: 200,
 			body: JSON.stringify(result),
 		};
 	} catch (error) {
 		console.log('Error retrieving all pets: ', error);
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,GET',
+			},
 			statusCode: 500,
 			body: JSON.stringify(error),
 		};

@@ -90,12 +90,24 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 			dataToUpdate,
 		});
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,PATCH',
+			},
 			statusCode: 204,
 			body: JSON.stringify(response),
 		};
 	} catch (error) {
 		console.log('Error updating pet data: ', error);
 		return {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers':
+					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+				'Access-Control-Allow-Methods': 'OPTIONS,PATCH',
+			},
 			statusCode: 500,
 			body: JSON.stringify(error),
 		};
