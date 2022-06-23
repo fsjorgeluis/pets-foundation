@@ -7,7 +7,6 @@ const {
 	objectCleaner,
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 
 async function filterData(
@@ -45,6 +44,8 @@ async function filterData(
 }
 
 const findAll = async (foundationPK: string): Promise<any> => {
+	const db = new DynamoDB.DocumentClient();
+
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',

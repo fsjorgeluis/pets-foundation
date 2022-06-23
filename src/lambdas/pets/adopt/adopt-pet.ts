@@ -4,7 +4,6 @@ const {
 	keyFormatter,
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
@@ -17,6 +16,8 @@ const adoptPet = async ({
 	pk: string;
 	petId: string;
 }): Promise<Record<string, any> | unknown> => {
+	const db = new DynamoDB.DocumentClient();
+
 	const params: any = {
 		TableName: TABLE_NAME,
 		Key: {

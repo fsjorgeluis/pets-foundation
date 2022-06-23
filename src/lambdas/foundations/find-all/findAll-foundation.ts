@@ -1,9 +1,10 @@
 const { DynamoDB } = require('aws-sdk');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 
 const findAll = async () => {
+	const db = new DynamoDB.DocumentClient();
+
 	const params = {
 		TableName: TABLE_NAME,
 		FilterExpression: 'contains(#SK, :sk)',

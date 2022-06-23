@@ -4,7 +4,6 @@ const {
 	keyFormatter,
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 
 const findOne = async ({
@@ -14,6 +13,8 @@ const findOne = async ({
 	pk: string;
 	petId: string;
 }): Promise<any> => {
+	const db = new DynamoDB.DocumentClient();
+
 	const params = {
 		TableName: TABLE_NAME,
 		KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',

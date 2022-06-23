@@ -5,13 +5,14 @@ const {
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 const { putObjectToS3 } = require('/opt/custom/nodejs/node_modules/s3-manager');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
 const BUCKET_NAME = process.env.BUCKET_NAME || '';
 
 const createFoundation = async (foundationData: Record<string, any>) => {
+	const db = new DynamoDB.DocumentClient();
+
 	foundationData[PRIMARY_KEY] = keyFormatter(
 		'FOUNDATION',
 		foundationData.FoundationName
@@ -38,7 +39,6 @@ export const handler = async (event: any): Promise<any> => {
 	const { foundationName, foundationAddress = '' } =
 		typeof event.body === 'object' ? event.body : JSON.parse(event.body);
 	try {
-		// Put request to S3
 		await putObjectToS3(
 			{ S3 },
 			BUCKET_NAME,

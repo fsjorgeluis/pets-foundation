@@ -1,4 +1,4 @@
-import { Stack, aws_s3 as s3, RemovalPolicy, StackProps } from 'aws-cdk-lib';
+import { Stack, aws_s3 as s3, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import { IS3StackProps } from '../src/interfaces';

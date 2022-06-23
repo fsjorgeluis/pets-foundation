@@ -22,21 +22,21 @@ export class LambdaStack extends Stack {
 			snsStack: { petsFoundationSNS },
 		} = props;
 
-		/* Getting the value of the parameterName from the SSM Parameter Store. */
+		/* Get parameterName from the SSM Parameter Store. */
 		const baseLayerArn = ssm.StringParameter.fromStringParameterName(
 			this,
 			'BaseLayerArn',
 			`base-layer-${props.stage}`
 		);
 
-		/* Creating a layer version from the baseLayerArn. */
+		/* Get layer Arn to share between lambdas. */
 		const sharedLayer = lambda.LayerVersion.fromLayerVersionArn(
 			this,
 			'SharedLayer',
 			baseLayerArn.stringValue
 		);
 
-		/* A function that returns an array of lambda objects. */
+		/* Returns an array of lambda objects. */
 		const lambdas = lambdaFunctions(sharedLayer);
 
 		/* Creating a lambda function for each lambda in the lambdaFunctions array. */
@@ -84,6 +84,7 @@ export class LambdaStack extends Stack {
 			}
 		);
 
+		/* Add permissions to send mail */
 		this.petsFoundation['sendEmail'].addToRolePolicy(
 			new iam.PolicyStatement({
 				effect: iam.Effect.ALLOW,

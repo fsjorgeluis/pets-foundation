@@ -1,6 +1,6 @@
+// TODO: return headers to avoid cors, add this chunk to apigateway
 const { DynamoDB } = require('aws-sdk');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 
@@ -11,6 +11,8 @@ const updateFoundation = async ({
 	body: Record<string, any>;
 	foundationId: string;
 }): Promise<unknown> => {
+	const db = new DynamoDB.DocumentClient();
+
 	const updatedItem = typeof body === 'object' ? body : JSON.parse(body);
 	const updatedItemProperties = Object.keys(updatedItem);
 	if (!updatedItem || updatedItemProperties.length < 1) {

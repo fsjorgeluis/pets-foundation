@@ -5,7 +5,6 @@ const {
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 const { putObjectToS3 } = require('/opt/custom/nodejs/node_modules/s3-manager');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
@@ -15,6 +14,8 @@ const addPet = async (
 	{ PK }: { PK: string },
 	petData: Record<string, any>
 ): Promise<unknown> => {
+	const db = new DynamoDB.DocumentClient();
+
 	const ID =
 		String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 
@@ -46,7 +47,6 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 	} = typeof event.body === 'object' ? event.body : JSON.parse(event.body);
 
 	try {
-		// Put request to S3
 		await putObjectToS3(
 			{ S3 },
 			BUCKET_NAME,

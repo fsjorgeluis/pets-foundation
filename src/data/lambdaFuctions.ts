@@ -1,4 +1,3 @@
-// import { LayerStack } from '../../lib/layer-stack';
 import { ILayerVersion } from 'aws-cdk-lib/aws-lambda';
 
 export const lambdaFunctions = (sharedLayer: ILayerVersion) => {

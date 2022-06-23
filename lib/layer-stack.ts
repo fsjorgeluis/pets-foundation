@@ -9,8 +9,6 @@ import { Construct } from 'constructs';
 import { ILayerStackProps } from '../src/interfaces';
 
 export class LayerStack extends Stack {
-	// public readonly petsFoundationLayer: lambda.LayerVersion;
-
 	constructor(scope: Construct, id: string, props?: ILayerStackProps) {
 		super(scope, id, props);
 

@@ -6,7 +6,6 @@ const {
 } = require('/opt/custom/nodejs/node_modules/key-formatter');
 const { putObjectToS3 } = require('/opt/custom/nodejs/node_modules/s3-manager');
 
-const db = new DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
 const SORT_KEY = process.env.SORT_KEY || '';
@@ -21,6 +20,8 @@ const updatePet = async ({
 	dataToUpdate: Record<string, any>;
 	petId: string;
 }): Promise<unknown> => {
+	const db = new DynamoDB.DocumentClient();
+
 	const updatedItem =
 		typeof dataToUpdate === 'object' ? dataToUpdate : JSON.parse(dataToUpdate);
 	const filteredItem = objectCleaner(updatedItem);
@@ -76,7 +77,6 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 	};
 
 	try {
-		// Put request to S3
 		await putObjectToS3(
 			{ S3 },
 			BUCKET_NAME,

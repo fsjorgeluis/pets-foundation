@@ -68,9 +68,6 @@ function getTextBody({ Attributes }: Record<string, any>) {
 }
 
 export const handler = async (event: any) => {
-	// console.log('SNS record: ', JSON.stringify(event, null, 2));
-	// const ses = new AWS.SES();
-
 	const message = JSON.parse(event.Records[0].Sns.Message);
 	const subject = event.Records[0].Sns.Subject;
 	// const type = event.Records[0].Sns.Type;

@@ -15,10 +15,10 @@ export class SNSStack extends Stack {
 		});
 
 		// Outputs
-		new CfnOutput(this, 'OutputSNSTopicARN', {
-			exportName: `sns-topic-${props.stage}`,
-			value: this.petsFoundationSNS.topicArn,
-			description: 'SNS Topic ARN',
-		});
+		// new CfnOutput(this, 'OutputSNSTopicARN', {
+		// 	exportName: `sns-topic-${props.stage}`,
+		// 	value: this.petsFoundationSNS.topicArn,
+		// 	description: 'SNS Topic ARN',
+		// });
 	}
 }
