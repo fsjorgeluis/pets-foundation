@@ -31,7 +31,7 @@ _Aggregate view_\*
 
 ## Endpoints disponibles
 
-Endpoints conectados a lambdas para la creación de una fundación u obtener todas las fundaciones registradas. Require: `Headers authorizationToken: allow`
+Endpoints conectados a lambdas para la creación de una fundación u obtener todas las fundaciones registradas. Require: Header `authorizationToken: allow | deny | unauthorized`
 
 ```
 /foundations
@@ -39,7 +39,7 @@ POST
 GET
 ```
 
-Endpoints conectados a lambdas para agregar una mascota u obtener todas las mascotas registradas para una fundación. Requiere: `Headers authorizationToken: allow, foundationPK: FOUNDATION#<name>`
+Endpoints conectados a lambdas para agregar una mascota u obtener todas las mascotas registradas para una fundación. Requiere: Header `authorizationToken: allow | deny | unauthorized`, query string params `?pk=<foundation_name>`
 
 ```
 /pets
@@ -47,7 +47,7 @@ POST
 GET
 ```
 
-Endpoints conectados a lambdas para obtener una mascota por `id`, registrada en una fundación, actualizar o liberar (eliminar) una mascota. Requiere: `Headers authorizationToken: allow, foundationPK: FOUNDATION#<name>`
+Endpoints conectados a lambdas para obtener una mascota por `id`, registrada en una fundación, actualizar o liberar (eliminar) una mascota. Requiere: Header `authorizationToken: allow | deny | unauthorized`, query string params `?pk=<foundation_name>`
 
 ```
 /pets/{petId}
@@ -56,7 +56,7 @@ PATCH
 DELETE
 ```
 
-Endpoint conectado a lambda para adoptar una mascota. Requiere: `Headers authorizationToken: allow, foundationPK: FOUNDATION#<name>`
+Endpoint conectado a lambda para adoptar una mascota. Requiere: Header `authorizationToken: allow | deny | unauthorized`, query string params `?pk=<foundation_name>`
 
 ```
 /{petId}/adopt
