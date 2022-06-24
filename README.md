@@ -86,7 +86,7 @@ Crear dentro de la carpeta `src` la siguiente estructura:
 
 Se puede obtener el contenido de los archivos que se muestran en la estructura de carpetas `layers/custom`, en los siguientes gists, [`key-formatter/index.js`](https://gist.github.com/fsjorgeluis/55c4bfa67148034f867155516b319638) y [`s3-manager/index.js`](https://gist.github.com/fsjorgeluis/6c04533e74641af3e6280b28a890ce21).
 
-## Comandos utiles de CDK
+## Comandos útiles de CDK
 
 - `npm i` instala las dependencias del proyecto.
 - `npm run build` transpila código TypeScript a JavaScript.
