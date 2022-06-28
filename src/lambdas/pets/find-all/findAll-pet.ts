@@ -71,19 +71,27 @@ export const handler = async (event: any): Promise<Record<string, any>> => {
 	const petBreed = event.queryStringParameters?.petBreed || '';
 
 	try {
-		const response = await findAll(pk);
-		const result = await filterData({ petType, petName, petBreed }, response);
+		const data = await findAll(pk);
+		const result = await filterData({ petType, petName, petBreed }, data);
+		const statusCode: number = data.Items.length < 1 ? 404 : 200;
 
-		return {
+		const response: Record<string, any> = {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Access-Control-Allow-Headers':
 					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
 				'Access-Control-Allow-Methods': 'OPTIONS,GET',
 			},
-			statusCode: 200,
-			body: JSON.stringify(result),
+			statusCode,
 		};
+
+		if (statusCode === 200) {
+			response['body'] = JSON.stringify(result);
+		} else {
+			response['body'] = JSON.stringify({ message: 'Not found' });
+		}
+
+		return response;
 	} catch (error) {
 		console.log('Error retrieving all pets: ', error);
 		return {

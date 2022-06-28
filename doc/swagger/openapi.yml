@@ -4,7 +4,7 @@ info:
   description: 'API encargada de gestionar la adopción de mascotas'
   version: '2022-06-21T15:48:47Z'
 servers:
-  - url: 'https://pxky6gu6a1.execute-api.us-east-1.amazonaws.com{basePath}'
+  - url: 'https://k6tzciz6q8.execute-api.us-east-1.amazonaws.com{basePath}'
     variables:
       basePath:
         default: '/dev'
