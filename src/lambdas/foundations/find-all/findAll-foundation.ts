@@ -25,26 +25,18 @@ const findAll = async () => {
 
 export const handler = async (): Promise<Record<string, any>> => {
 	try {
-		const data = await findAll();
-		const statusCode: number = data.Items.length < 1 ? 404 : 200;
+		const response = await findAll();
 
-		const response: Record<string, any> = {
+		return {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Access-Control-Allow-Headers':
 					'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
 				'Access-Control-Allow-Methods': 'OPTIONS,GET',
 			},
-			statusCode,
+			statusCode: 200,
+			body: JSON.stringify(response.Items),
 		};
-
-		if (statusCode === 200) {
-			response['body'] = JSON.stringify(data.Items);
-		} else {
-			response['body'] = JSON.stringify({ message: 'Not found' });
-		}
-
-		return response;
 	} catch (error) {
 		console.log('Error retrieving foundations: ', error);
 		return {
